@@ -17,7 +17,6 @@ describe('GET /api/topics', () => {
         .get('/api/topics')
         .expect(200)
         .then(({ body }) => {
-            console.log(body)
             expect(body).toMatchObject({'topics':[
                 {
                   description: 'The man, the Mitch, the legend',
