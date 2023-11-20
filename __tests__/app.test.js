@@ -17,10 +17,19 @@ describe('GET /api/topics', () => {
         .get('/api/topics')
         .expect(200)
         .then(({ body }) => {
-            expect(Object.keys(body[0]))
-            .toEqual(expect.arrayContaining(
-                ['slug', 'description'])
-            )
+            expect(body).toMatchObject([
+                {
+                  description: 'The man, the Mitch, the legend',
+                  slug: 'mitch'
+                },
+                {
+                  description: 'Not dogs',
+                  slug: 'cats'
+                },
+                {
+                  description: 'what books are made of',
+                  slug: 'paper'
+                }])
         })
     });
 });
