@@ -63,7 +63,7 @@ describe('GET /api/articles/:article_id', () => {
         .get('/api/articles/11')
         .expect(200)
         .then(({ body }) => {
-            expect(body).toMatchObject({article: [{
+            expect(body).toMatchObject({article: {
                 article_id: 11,
                 title: "Am I a cat?",
                 topic: "mitch",
@@ -73,7 +73,7 @@ describe('GET /api/articles/:article_id', () => {
                   "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
                 votes: 0,
                 created_at: '2020-01-15T22:21:00.000Z'
-              }]})
+              }})
         })
     });
     test('should return 404 Not Found status when request to a non-existent article', () => {
