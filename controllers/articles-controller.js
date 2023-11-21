@@ -1,7 +1,7 @@
-const { specificArticles } = require("../models/articles-model")
+const { specificArticle } = require("../models/articles-model")
 
 exports.getArticle = (req, res, next) => {
-    specificArticles(req)
+    specificArticle(req)
     .then((data) => {
         res.status(200).send({article: data[0]})
     })

@@ -84,4 +84,12 @@ describe('GET /api/articles/:article_id', () => {
             expect(res.text).toBe('Not Found!')
         })
     });
+    test('should return 400 Bad Request status when request to article_id made by anything other than a number', () => {
+        return request(app)
+        .get('/api/articles/banana')
+        .expect(400)
+        .then((res) => {
+            expect(res.body).toEqual({message: 'Bad Request'})
+        })
+    });
 });
