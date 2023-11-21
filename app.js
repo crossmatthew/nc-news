@@ -1,14 +1,20 @@
 const express = require('express');
+const { getEndpointsJson } = require('./controllers/endpoints-controller');
+const { getArticle } = require('./controllers/articles-controller');
+const { getTopics } = require('./controllers/topics-controller');
+const { handleFourZeroFour, handlePsqlErrors, handleCustomErrors, handleFiveHundred } = require('./controllers/error-handlers');
 const app = express();
+
+
 app.use(express.json());
-const { getTopics, getEndpointsJson } = require('./controllers/topics-controller');
 
-
-app.get('/api/topics', getTopics);
 app.get('/api', getEndpointsJson);
+app.get('/api/topics', getTopics);
+app.get('/api/articles/:article_id', getArticle);
 
-app.use((req, res, next) => {
-    res.status(404).send("Not Found!")
-  })
-
+app.all('*', handleFourZeroFour);
+app.use(handlePsqlErrors);
+app.use(handleCustomErrors);
+app.use(handleFiveHundred);
+  
 module.exports = app;
