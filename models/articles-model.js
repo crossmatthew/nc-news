@@ -1,3 +1,4 @@
+const { handleFourZeroFour } = require('../controllers/error-handlers');
 const db = require('../db/connection');
 
 exports.specificArticles = (req) => {
@@ -6,6 +7,10 @@ exports.specificArticles = (req) => {
     SELECT * FROM articles
     WHERE article_id = $1`, [params.article_id])
     .then((data) => {
+        if (!data.rows.length) {
+            return Promise.reject()
+        } else {
         return data.rows
+        }
     })
 }
