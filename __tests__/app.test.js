@@ -48,12 +48,33 @@ describe('GET /api', () => {
         return request(app)
         .get('/api')
         .expect(200)
-        .then(({body}) => {
+        .then(({ body }) => {
             expect(body).toMatchObject({endpoints: {
                 "GET /api": {},
                 "GET /api/topics": {},
                 "GET /api/articles": {}
             }})
         })
+    });
+});
+describe('GET /api/articles/:article_id', () => {
+    test('should return 200 OK status and an article object by id', () => {
+        return request(app)
+        .get('/api/articles/11')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body).toMatchObject({article: [{
+                article_id: 11,
+                title: "Am I a cat?",
+                topic: "mitch",
+                author: "icellusedkars",
+                body: "Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?",
+                article_img_url:
+                  "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+              }]})
+        })
+    });
+    test('should return 404 Not Found status when request to a non-existent article', () => {
+        
     });
 });
