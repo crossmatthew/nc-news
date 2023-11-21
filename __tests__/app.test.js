@@ -17,6 +17,7 @@ describe('GET /api/notARoute', () => {
         .get('/api/topicsz')
         .expect(404)
         .then((res) => {
+            console.log(res, 'hello')
             expect(res.text).toBe('Not Found!')
         })
     });
@@ -75,6 +76,6 @@ describe('GET /api/articles/:article_id', () => {
         })
     });
     test('should return 404 Not Found status when request to a non-existent article', () => {
-        
+
     });
 });
