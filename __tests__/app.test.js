@@ -71,6 +71,8 @@ describe('GET /api/articles/:article_id', () => {
                 body: "Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?",
                 article_img_url:
                   "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                votes: 0,
+                created_at: '2020-01-15T22:21:00.000Z'
               }]})
         })
     });
