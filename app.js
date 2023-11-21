@@ -2,7 +2,7 @@ const express = require('express');
 const { getEndpointsJson } = require('./controllers/endpoints-controller');
 const { getArticle } = require('./controllers/articles-controller');
 const { getTopics } = require('./controllers/topics-controller');
-const { handleFourZeroFour, handlePsqlErrors } = require('./controllers/error-handlers');
+const { handleFourZeroFour, handlePsqlErrors, handleCustomErrors, handleFiveHundred } = require('./controllers/error-handlers');
 const app = express();
 
 
@@ -14,5 +14,7 @@ app.get('/api/articles/:article_id', getArticle);
 
 app.all('*', handleFourZeroFour);
 app.use(handlePsqlErrors);
+app.use(handleCustomErrors);
+app.use(handleFiveHundred);
   
 module.exports = app;
