@@ -11,6 +11,16 @@ afterAll(() => {
     return db.end();
 });
 
+describe('GET /api/notARoute', () => {
+    test('should return a 404 status code when request made to a non-existant route', () => {
+        return request(app)
+        .get('/api/topicsz')
+        .expect(404)
+        .then((res) => {
+            expect(res.text).toBe('Not Found!')
+        })
+    });
+});
 describe('GET /api/topics', () => {
     test('should return 200 OK status code and a body of all topics', () => {
         return request(app)
@@ -33,14 +43,17 @@ describe('GET /api/topics', () => {
         })
     });
 });
-
-describe('GET /api/notARoute', () => {
-    test('should return a 404 status code when request made to a non-existant route', () => {
+describe('GET /api', () => {
+    test('should return 200 OK status code and an object of all available endpoints', () => {
         return request(app)
-        .get('/api/topicsz')
-        .expect(404)
-        .then((res) => {
-            expect(res.text).toBe('Not Found!')
+        .get('/api')
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toMatchObject({endpoints: {
+                "GET /api": {},
+                "GET /api/topics": {},
+                "GET /api/articles": {}
+            }})
         })
     });
 });
