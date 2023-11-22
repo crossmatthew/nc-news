@@ -57,6 +57,54 @@ describe('GET /api', () => {
         })
     });
 });
+describe('GET /api/articles', () => {
+    test('should return 200 OK status, and an array of all articles (as objects)--with a default sort order of date, descending', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.length).toBe(13)
+            expect(body).toBeSorted({ descending: true, key: 'created_at'})
+            expect(body).toMatchObject([
+                {created_at: '2020-11-03T09:12:00.000Z'},
+                {created_at: '2020-10-18T01:00:00.000Z'},
+                {created_at: '2020-10-16T05:03:00.000Z'},
+                {created_at: '2020-10-11T11:24:00.000Z'},
+                {created_at: '2020-10-11T11:24:00.000Z'},
+                {created_at: '2020-08-03T13:14:00.000Z'},
+                {created_at: '2020-07-09T20:11:00.000Z'},
+                {created_at: '2020-06-06T09:10:00.000Z'},
+                {created_at: '2020-05-14T04:15:00.000Z'},
+                {created_at: '2020-05-06T01:14:00.000Z'},
+                {created_at: '2020-04-17T01:08:00.000Z'},
+                {created_at: '2020-01-15T22:21:00.000Z'},
+                {created_at: '2020-01-07T14:08:00.000Z'}])
+        })
+    });
+});
+test(`should return the following properties on every article object:
+    article_id, author, title, topic, created_at, votes, article_img_url, comment_count`, () => {
+    return request(app)
+    .get('/api/articles')
+    .expect(200)
+    .then(({ body }) => {
+        body.forEach((article) => {
+            const articleKeys = Object.keys(article)
+            expect(articleKeys).toEqual(expect.arrayContaining(['article_id', 'title', 'author', 'votes', 'topic','comment_count', 'created_at', 'article_img_url']))
+        })
+    })
+});
+test('should return articles without a body key', () => {
+    return request(app)
+    .get('/api/articles')
+    .expect(200)
+    .then(({ body }) => {
+        body.forEach((article) => {
+            const articleKeys = Object.keys(article)
+            expect(articleKeys).toEqual(expect.not.arrayContaining(['body']))
+        })
+    })
+});
 describe('GET /api/articles/:article_id', () => {
     test('should return 200 OK status and an article object by id', () => {
         return request(app)
@@ -76,6 +124,7 @@ describe('GET /api/articles/:article_id', () => {
               }})
         })
     });
+    });
     test('should return 404 Not Found status when request to a non-existent article', () => {
         return request(app)
         .get('/api/articles/9000')
@@ -92,4 +141,3 @@ describe('GET /api/articles/:article_id', () => {
             expect(res.body).toEqual({message: 'Bad Request'})
         })
     });
-});

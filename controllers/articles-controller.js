@@ -1,4 +1,4 @@
-const { specificArticle } = require("../models/articles-model")
+const { specificArticle, allArticles } = require("../models/articles-model")
 
 exports.getArticle = (req, res, next) => {
     specificArticle(req)
@@ -8,4 +8,13 @@ exports.getArticle = (req, res, next) => {
     .catch((err) => {
         next(err)
     })
-}
+};
+exports.getAllArticles = (req, res, next) => {
+    allArticles(req)
+    .then((data) => {
+        res.status(200).send(data)
+    })
+    .catch((err) => {
+        next(err)
+    })
+};
