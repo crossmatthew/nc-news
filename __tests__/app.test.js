@@ -90,7 +90,7 @@ test(`should return the following properties on every article object:
     .then(({ body }) => {
         body.forEach((article) => {
             const articleKeys = Object.keys(article)
-            expect(articleKeys).toEqual(expect.arrayContaining(['article_id', 'title', 'author', 'votes', 'topic','comment_count', 'created_at', 'article_img_url']))
+            expect(articleKeys).toMatchObject(['article_id', 'title', 'author', 'created_at', 'article_img_url','votes', 'topic','comment_count'])
         })
     })
 });
