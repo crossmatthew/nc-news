@@ -141,3 +141,38 @@ describe('GET /api/articles/:article_id', () => {
             expect(res.body).toEqual({message: 'Bad Request'})
         })
     });
+describe.skip('GET /api/articles/:article_id/comments', () => {
+    test('should return 200 OK status and an array of all comments for a specific article', () => {
+        return request(app)
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.length).toBe(11)
+            expect(body).toMatchObject([])
+        })
+    });
+    test('should return 200 OK for and an empty array for an article with no comments', () => {
+        return request(app)
+        .get('/api/articles/6/comments')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body).toMatchObject([])
+        })
+    });
+    test('should return 404 Not Found status when request to a non-existent article', () => {
+        return request(app)
+        .get('/api/articles/9000/comments')
+        .expect(404)
+        .then((res) => {
+            expect(res.text).toBe('Not Found!')
+        })
+    });
+    test('should return 400 Bad Request status when request to article_id made by anything other than a number', () => {
+        return request(app)
+        .get('/api/articles/banana/comments')
+        .expect(400)
+        .then((res) => {
+            expect(res.body).toEqual({message: 'Bad Request'})
+        })
+    });
+});
