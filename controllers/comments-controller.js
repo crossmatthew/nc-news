@@ -6,6 +6,7 @@ exports.getComments = (req, res, next) => {
         res.status(200).send(data)
     })
     .catch((err) => {
+        console.log('!!!!', err)
         next(err)
     })
 }

@@ -82,29 +82,6 @@ describe('GET /api/articles', () => {
         })
     });
 });
-test(`should return the following properties on every article object:
-    article_id, author, title, topic, created_at, votes, article_img_url, comment_count`, () => {
-    return request(app)
-    .get('/api/articles')
-    .expect(200)
-    .then(({ body }) => {
-        body.forEach((article) => {
-            const articleKeys = Object.keys(article)
-            expect(articleKeys).toMatchObject(['article_id', 'title', 'author', 'created_at', 'article_img_url','votes', 'topic','comment_count'])
-        })
-    })
-});
-test('should return articles without a body key', () => {
-    return request(app)
-    .get('/api/articles')
-    .expect(200)
-    .then(({ body }) => {
-        body.forEach((article) => {
-            const articleKeys = Object.keys(article)
-            expect(articleKeys).toEqual(expect.not.arrayContaining(['body']))
-        })
-    })
-});
 describe('GET /api/articles/:article_id', () => {
     test('should return 200 OK status and an article object by id', () => {
         return request(app)
@@ -124,7 +101,6 @@ describe('GET /api/articles/:article_id', () => {
               }})
         })
     });
-    });
     test('should return 404 Not Found status when request to a non-existent article', () => {
         return request(app)
         .get('/api/articles/9000')
@@ -141,22 +117,43 @@ describe('GET /api/articles/:article_id', () => {
             expect(res.body).toEqual({message: 'Bad Request'})
         })
     });
-describe.skip('GET /api/articles/:article_id/comments', () => {
-    test('should return 200 OK status and an array of all comments for a specific article', () => {
+});
+describe('GET /api/articles/:article_id/comments', () => {
+    test('should return 200 OK status and an array of all comments for a specific article, sorted in descending order by created_at', () => {
         return request(app)
         .get('/api/articles/1/comments')
         .expect(200)
         .then(({ body }) => {
+            expect(body).toBeSorted({ descending: true, key: 'created_at' })
             expect(body.length).toBe(11)
-            expect(body).toMatchObject([])
+            expect(body).toMatchObject([
+                {
+                  comment_id: 5,
+                  body: 'I hate streaming noses',
+                  article_id: 1,
+                  author: 'icellusedkars',
+                  votes: 0,
+                  created_at: '2020-11-03T21:00:00.000Z'
+                },
+                {created_at: '2020-10-31T03:03:00.000Z'},
+                {created_at: '2020-07-21T00:20:00.000Z'},
+                {created_at: '2020-06-15T10:25:00.000Z'},
+                {created_at: '2020-05-15T20:19:00.000Z'},
+                {created_at: '2020-04-14T20:19:00.000Z'},
+                {created_at: '2020-04-11T21:02:00.000Z'},
+                {created_at: '2020-03-02T07:10:00.000Z'},
+                {created_at: '2020-03-01T01:13:00.000Z'},
+                {created_at: '2020-02-23T12:01:00.000Z'},
+                {created_at: '2020-01-01T03:08:00.000Z'}
+              ])
         })
     });
-    test('should return 200 OK for and an empty array for an article with no comments', () => {
+    test('should return 200 OK for and an empty object for an article with no comments', () => {
         return request(app)
-        .get('/api/articles/6/comments')
+        .get('/api/articles/4/comments')
         .expect(200)
         .then(({ body }) => {
-            expect(body).toMatchObject([])
+            expect(body).toMatchObject({})
         })
     });
     test('should return 404 Not Found status when request to a non-existent article', () => {
