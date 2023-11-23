@@ -104,11 +104,10 @@ describe("formatComments", () => {
   });
 });
 describe('checkExists', () => {
-  test('should return everything from a specificed table, where a column has a passed value', () => {
+  test('should return an empty array if article_id exists, but has no comments on the comments table', () => {
     return checkExists('comments', 'article_id', 6)
     .then((result) => {
-      expect(result.length).toBe(1)
-      expect(Object.keys(result[0])).toMatchObject(["comment_id", "body", "article_id", "author", "votes", "created_at"])
+      expect(result).toMatchObject([])
     })
   });
   test('should return a rejected promise--with the value undefined--when passed a non-existent article_id', () => {
