@@ -3,7 +3,7 @@ const checkExists = require('../utils/checkExists');
 
 exports.commentsOfArticle = (req) => {
     const { params } = req
-    if (typeof (req * 1) !== 'number') {
+    if (typeof (params.article_id * 1) !== 'number') {
         return Promise.reject()
     }
     return db.query(`
