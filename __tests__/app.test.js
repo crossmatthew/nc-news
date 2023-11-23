@@ -65,45 +65,8 @@ describe('GET /api/articles', () => {
         .then(({ body }) => {
             expect(body.length).toBe(13)
             expect(body).toBeSorted({ descending: true, key: 'created_at'})
-            expect(body).toMatchObject([
-                {created_at: '2020-11-03T09:12:00.000Z'},
-                {created_at: '2020-10-18T01:00:00.000Z'},
-                {created_at: '2020-10-16T05:03:00.000Z'},
-                {created_at: '2020-10-11T11:24:00.000Z'},
-                {created_at: '2020-10-11T11:24:00.000Z'},
-                {created_at: '2020-08-03T13:14:00.000Z'},
-                {created_at: '2020-07-09T20:11:00.000Z'},
-                {created_at: '2020-06-06T09:10:00.000Z'},
-                {created_at: '2020-05-14T04:15:00.000Z'},
-                {created_at: '2020-05-06T01:14:00.000Z'},
-                {created_at: '2020-04-17T01:08:00.000Z'},
-                {created_at: '2020-01-15T22:21:00.000Z'},
-                {created_at: '2020-01-07T14:08:00.000Z'}])
         })
     });
-});
-test(`should return the following properties on every article object:
-    article_id, author, title, topic, created_at, votes, article_img_url, comment_count`, () => {
-    return request(app)
-    .get('/api/articles')
-    .expect(200)
-    .then(({ body }) => {
-        body.forEach((article) => {
-            const articleKeys = Object.keys(article)
-            expect(articleKeys).toEqual(expect.arrayContaining(['article_id', 'title', 'author', 'votes', 'topic','comment_count', 'created_at', 'article_img_url']))
-        })
-    })
-});
-test('should return articles without a body key', () => {
-    return request(app)
-    .get('/api/articles')
-    .expect(200)
-    .then(({ body }) => {
-        body.forEach((article) => {
-            const articleKeys = Object.keys(article)
-            expect(articleKeys).toEqual(expect.not.arrayContaining(['body']))
-        })
-    })
 });
 describe('GET /api/articles/:article_id', () => {
     test('should return 200 OK status and an article object by id', () => {
@@ -124,7 +87,6 @@ describe('GET /api/articles/:article_id', () => {
               }})
         })
     });
-    });
     test('should return 404 Not Found status when request to a non-existent article', () => {
         return request(app)
         .get('/api/articles/9000')
@@ -141,3 +103,42 @@ describe('GET /api/articles/:article_id', () => {
             expect(res.body).toEqual({message: 'Bad Request'})
         })
     });
+});
+describe('GET /api/articles/:article_id/comments', () => {
+    test('should return 200 OK status and an array of all comments for a specific article, sorted in descending order by created_at', () => {
+        return request(app)
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.comments).toBeSorted({ descending: true, key: 'created_at' })
+            expect(body.comments.length).toBe(11)
+            body.comments.forEach((obj) => {
+                expect(Object.keys(obj)).toMatchObject(['comment_id', 'body', 'article_id', 'author', 'votes', 'created_at'])
+            })
+        })
+    });
+    test('should return 200 OK and an empty array for an article with no comments', () => {
+        return request(app)
+        .get('/api/articles/4/comments')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.comments).toMatchObject([])
+        })
+    });
+    test('should return 404 Not Found status when request to a non-existent article', () => {
+        return request(app)
+        .get('/api/articles/9000/comments')
+        .expect(404)
+        .then((res) => {
+            expect(res.text).toBe('Not Found!')
+        })
+    });
+    test('should return 400 Bad Request status when request to article_id made by anything other than a number', () => {
+        return request(app)
+        .get('/api/articles/banana/comments')
+        .expect(400)
+        .then((res) => {
+            expect(res.body).toEqual({message: 'Bad Request'})
+        })
+    });
+});

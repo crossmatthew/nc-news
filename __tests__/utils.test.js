@@ -3,6 +3,7 @@ const {
   createRef,
   formatComments,
 } = require("../db/seeds/utils");
+const checkExists = require("../utils/checkExists");
 
 describe("convertTimestampToDate", () => {
   test("returns a new object", () => {
@@ -102,3 +103,14 @@ describe("formatComments", () => {
     expect(formattedComments[0].created_at).toEqual(new Date(timestamp));
   });
 });
+describe('checkExists', () => {
+  test('should return an empty array if article_id exists, but has no comments on the comments table', () => {
+    return checkExists('comments', 'article_id', 6)
+    .then((result) => {
+      expect(result).toMatchObject([])
+    })
+  });
+  test('should return a rejected promise--with the value undefined--when passed a non-existent article_id', () => {
+    return expect(checkExists('articles', 'article_id', 9000000)).rejects.toBe(undefined)
+    })
+  });
