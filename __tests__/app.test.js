@@ -118,7 +118,7 @@ describe('GET /api/articles/:article_id', () => {
         })
     });
 });
-describe.skip('GET /api/articles/:article_id/comments', () => {
+describe('GET /api/articles/:article_id/comments', () => {
     test('should return 200 OK status and an array of all comments for a specific article, sorted in descending order by created_at', () => {
         return request(app)
         .get('/api/articles/1/comments')
@@ -148,7 +148,7 @@ describe.skip('GET /api/articles/:article_id/comments', () => {
               ])
         })
     });
-    test('should return 200 OK for and an empty object for an article with no comments', () => {
+    test('should return 200 OK and an empty object for an article with no comments', () => {
         return request(app)
         .get('/api/articles/4/comments')
         .expect(200)
