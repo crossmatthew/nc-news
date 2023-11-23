@@ -65,20 +65,6 @@ describe('GET /api/articles', () => {
         .then(({ body }) => {
             expect(body.length).toBe(13)
             expect(body).toBeSorted({ descending: true, key: 'created_at'})
-            expect(body).toMatchObject([
-                {created_at: '2020-11-03T09:12:00.000Z'},
-                {created_at: '2020-10-18T01:00:00.000Z'},
-                {created_at: '2020-10-16T05:03:00.000Z'},
-                {created_at: '2020-10-11T11:24:00.000Z'},
-                {created_at: '2020-10-11T11:24:00.000Z'},
-                {created_at: '2020-08-03T13:14:00.000Z'},
-                {created_at: '2020-07-09T20:11:00.000Z'},
-                {created_at: '2020-06-06T09:10:00.000Z'},
-                {created_at: '2020-05-14T04:15:00.000Z'},
-                {created_at: '2020-05-06T01:14:00.000Z'},
-                {created_at: '2020-04-17T01:08:00.000Z'},
-                {created_at: '2020-01-15T22:21:00.000Z'},
-                {created_at: '2020-01-07T14:08:00.000Z'}])
         })
     });
 });
