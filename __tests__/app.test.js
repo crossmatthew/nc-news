@@ -176,21 +176,26 @@ describe('GET /api/articles/:article_id/comments', () => {
 describe.skip('POST /api/articles/:article_id/comments', () => {
     test('should return a status code of 201 and the posted comment', () => {
         return request(app)
-        .post('/api/articles/:article_id/comments')
+        .post('/api/articles/2/comments')
         .expect(201)
         .send({
-
+            username: 'butter_bridge',
+            body: 'good job lad'
         })
         .then(({ body }) => {
-            expect(body.article_id).toBe(27)
-            expect(body).toMatchObject({
-
-            })
+            expect(body.comment_id).toBe(19)
+            expect(body).toMatchObject( {
+                comment_id: 19,
+                body: 'good job lad',
+                article_id: 2,
+                author: 'butter_bridge',
+                votes: 0,
+              })
         })
     });
     test('should return a 400 status code if supplied an incorrect amount of columns', () => {
         return request(app)
-        .post('/api/articles/:article_id/comments')
+        .post('/api/articles/1/comments')
         .expect(400)
         .send({
             body: 'this is a BODY'
@@ -202,19 +207,21 @@ describe.skip('POST /api/articles/:article_id/comments', () => {
     });
     test('should return a 400 status code if columns are supplied the wrong data type', () => {
         return request(app)
-        .post('/api/articles/:article_id/comments')
-        .expect(400)
+        .post('/api/articles/1/comments')
+        .expect(201)
         .send({
+            username: 'butter_bridge',
             body: true
         })
         .then(({ body }) => {
+            console.log(body, 'bodyyyyyyyyyyyyyyyyy')
             expect(body.code).toBe('42P02')
             expect(body.code).toBe('Also an error message')
         })
     });
     test('should return a 400 status code if no body is sent', () => {
         return request(app)
-        .post('/api/articles/:article_id/comments')
+        .post('/api/articles/1/comments')
         .expect(400)
         .send({})
         .then(({ body }) => {
