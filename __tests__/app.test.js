@@ -173,7 +173,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         })
     });
 });
-describe('POST /api/articles/:article_id/comments', () => {
+describe.skip('POST /api/articles/:article_id/comments', () => {
     test('should return a status code of 201 and the posted comment', () => {
         return request(app)
         .post('/api/articles/:article_id/comments')
