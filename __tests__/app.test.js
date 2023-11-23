@@ -173,3 +173,43 @@ describe('GET /api/articles/:article_id/comments', () => {
         })
     });
 });
+describe.skip('POST /api/articles/:article_id/comments', () => {
+    test('should return a status code of 201 and the posted comment', () => {
+        return request(app)
+        .post('/api/articles/:article_id/comments')
+        .expect(201)
+        .send({
+
+        })
+        .then(({ body }) => {
+            expect(body.article_id).toBe(27)
+            expect(body).toMatchObject({
+
+            })
+        })
+    });
+    test('should return a 400 status code if supplied an incorrect amount of columns', () => {
+        return request(app)
+        .post('/api/articles/:article_id/comments')
+        .expect(400)
+        .send({
+            body: 'this is a BODY'
+        })
+        .then(({ body }) => {
+            expect(body.code).toBe('22P02')
+            expect(body.message).toBe('An error message?!')
+        })
+    });
+    test('should return a 400 status code if columns are supplied the wrong data type', () => {
+        return request(app)
+        .post('/api/articles/:article_id/comments')
+        .expect(400)
+        .send({
+            body: true
+        })
+        .then(({ body }) => {
+            expect(body.code).toBe('42P02')
+            expect(body.code).toBe('Also an error message')
+        })
+    });
+});
