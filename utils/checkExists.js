@@ -7,7 +7,7 @@ function checkExists(table, column, value) {
         if (result.rows.length === 0) {
             return Promise.reject()
         } else {
-            return result.rows
+            return result.comments = []
         }
     })
 };
