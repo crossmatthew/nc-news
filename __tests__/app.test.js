@@ -16,8 +16,8 @@ describe('GET /api/notARoute', () => {
         return request(app)
         .get('/api/topicsz')
         .expect(404)
-        .then((res) => {
-            expect(res.text).toBe('Not Found!')
+        .then(({ body }) => {
+            expect(body.msg).toBe('Not Found!')
         })
     });
 });
@@ -106,7 +106,7 @@ describe('GET /api/articles/:article_id', () => {
         .get('/api/articles/9000')
         .expect(404)
         .then(({ body }) => {
-            expect(body).toEqual({})
+            expect(body.msg).toBe('Not Found!')
         })
     });
     test('should return 400 Bad Request status when request to article_id made by anything other than a number', () => {
@@ -204,28 +204,38 @@ describe('POST /api/articles/:article_id/comments', () => {
             expect(body.msg).toBe('Not Found!')
         })
     });
+    test('should return a 404 if a username is not provided (cannot be found)', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .expect(404)
+        .send({
+            body: 'this is a BODY'
+        })
+        .then(({ body }) => {
+            expect(body.msg).toBe('Not Found!')
+        })
+    });
+    test('should return a 404 status code if a user does not exist', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .expect(404)
+        .send({
+            username: 'blanko',
+            body: 'aaaasss'
+        })
+        .then(({ body }) => {
+            expect(body.msg).toBe('Not Found!')
+        })
+    });
     test('should return a 400 status code and 23502 PSQL error code if a NOT NULL constraint is violated', () => {
         return request(app)
         .post('/api/articles/1/comments')
         .expect(400)
         .send({
-            body: 'this is a BODY'
+            username: 'icellusedkars'
         })
         .then(({ body }) => {
             expect(body.code).toBe('23502')
-            expect(body.msg).toBe('Bad Request')
-        })
-    });
-    test('should return a 400 status code if a Foreign Key Violation occurs', () => {
-        return request(app)
-        .post('/api/articles/1/comments')
-        .expect(400)
-        .send({
-            username: true,
-            body: 'aaaasss'
-        })
-        .then(({ body }) => {
-            expect(body.code).toBe('23503')
             expect(body.msg).toBe('Bad Request')
         })
     });
