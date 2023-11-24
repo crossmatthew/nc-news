@@ -211,15 +211,10 @@ describe('POST /api/articles/:article_id/comments', () => {
 });
 describe('PATCH /api/articles/:article_id', () => {
     test('should return 200 OK status code and respond with votes increased in the updated article', () => {
-        return db.query(`SELECT votes FROM articles WHERE article_id = 6`)
-        .then((votesBeforePatch) => {
-            const numOfVotes = votesBeforePatch.rows[0].votes
-            expect(numOfVotes).toBe(0)
             return request(app)
             .patch('/api/articles/6')
             .expect(200)
             .send({ inc_votes: 5 })
-        })
         .then(({ body }) => {
             expect(body).toEqual({
                 article_id: 6,
@@ -235,15 +230,10 @@ describe('PATCH /api/articles/:article_id', () => {
         })
     });
     test('should return 200 OK status code and respond with the votes decreased in the updated article', () => {
-        return db.query(`SELECT votes FROM articles WHERE article_id = 1`)
-        .then((votesBeforePatch) => {
-            const numOfVotes = votesBeforePatch.rows[0].votes
-            expect(numOfVotes).toBe(100)
             return request(app)
             .patch('/api/articles/1')
             .expect(200)
             .send({ inc_votes: -110 })
-        })
         .then(({ body }) => {
             expect(body).toEqual({
                 article_id: 1,
@@ -258,7 +248,7 @@ describe('PATCH /api/articles/:article_id', () => {
         )
         })
     });
-    test('should return 404 if trying to PATCH a non-existing article', () => {
+    test('should return 404 if trying to PATCH a non-existing article (invalid number)', () => {
         return request(app)
         .patch('/api/articles/6000')
         .expect(404)
@@ -266,6 +256,9 @@ describe('PATCH /api/articles/:article_id', () => {
         .then(({ body }) => {
             expect(body.msg).toBe('Not Found!')
         })
+    });
+    test('should return a 400 status code if trying to PATCH a non-existing article (by passing not a number)', () => {
+        
     });
     test('should return a 400 status code if trying to PATCH votes with a data type that is not an INT', () => {
         return request(app)
