@@ -8,6 +8,18 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
+  "GET /api/users": {
+    "description": "serves an array of objects, showing all users",
+    "exampleResponse": {
+      "articles": [
+        {
+          "username": "cooking",
+          "name": "weegembump",
+          "avatar_url": "https://google.com/something_like_an_image.jpg"
+        }
+      ]
+    }
+  },
   "GET /api/articles": {
     "description": "serves an array of all articles, by default sorted by date in descending order, and showing how many comments each article has",
     "queries": ["author", "topic", "sort_by", "order"],
@@ -61,7 +73,8 @@
   },
   "DELETE /api/articles/comments/:comment_id": {
     "description": "deletes a comment when passed its comment_id"
-"POST /api/articles/:article_id/comments": {
+  },
+  "POST /api/articles/:article_id/comments": {
   "description": "takes a username and body, and allows comments to be posted to specific articles",
   "queries": [],
   "exampleResponse": {
