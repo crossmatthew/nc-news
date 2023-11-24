@@ -7,14 +7,8 @@ function checkExists(table, column, value) {
         if (result.rows.length === 0) {
             return Promise.reject({status: 404, msg: 'Not Found!'})
             } else {
-                return result.rows
+                return result.comments = []
             }
         })
-    }
-            return Promise.reject()
-        } else {
-            return result.comments = []
-        }
-    })
-};
+    };
 module.exports = checkExists
