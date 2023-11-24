@@ -35,10 +35,10 @@ exports.commentToPost = (req) => {
 };
 exports.deleteThisComment = (req) => {
     const { params } = req
-    return checkExists('comments', 'comment_id', params.article_id)
+    return checkExists('comments', 'comment_id', params.comment_id)
     .then(() => {
         return db.query(`
-        DELETE * FROM comments
-        WHERE comment_id = $1`, params.comment_id)
+        DELETE FROM comments
+        WHERE comment_id = $1`, [params.comment_id])
     })
 }
