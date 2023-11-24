@@ -1,4 +1,4 @@
-const { commentsOfArticle, commentToPost } = require("../models/comments-model")
+const { commentsOfArticle, commentToPost, deleteThisComment } = require("../models/comments-model")
 
 exports.getComments = (req, res, next) => {
     commentsOfArticle(req)
@@ -18,3 +18,12 @@ exports.postComment = (req, res, next) => {
         next(err)
     })
 };
+exports.deleteComment = (req, res, next) => {
+    deleteThisComment(req)
+    .then(() => {
+        res.status(204)
+    })
+    .catch((err) => {
+        next(err)
+    })
+}
