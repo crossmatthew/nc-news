@@ -257,8 +257,14 @@ describe('PATCH /api/articles/:article_id', () => {
             expect(body.msg).toBe('Not Found!')
         })
     });
-    test('should return a 400 status code if trying to PATCH a non-existing article (by passing not a number)', () => {
-        
+    test('should return a 400 status code if trying to PATCH a non-existing article (by not passing a number)', () => {
+        return request(app)
+        .patch('/api/articles/pasta')
+        .expect(400)
+        .send({ inc_votes: 3 })
+        .then(({ body }) => {
+            expect(body.msg).toBe('Bad Request')
+        })
     });
     test('should return a 400 status code if trying to PATCH votes with a data type that is not an INT', () => {
         return request(app)
