@@ -20,8 +20,8 @@ exports.postComment = (req, res, next) => {
 };
 exports.deleteComment = (req, res, next) => {
     deleteThisComment(req)
-    .then(() => {
-        res.status(204)
+    .then((data) => {
+        res.status(204).send(data)
     })
     .catch((err) => {
         next(err)
