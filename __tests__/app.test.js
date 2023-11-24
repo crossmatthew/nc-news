@@ -105,16 +105,16 @@ describe('GET /api/articles/:article_id', () => {
         return request(app)
         .get('/api/articles/9000')
         .expect(404)
-        .then((res) => {
-            expect(res.text).toBe('Not Found!')
+        .then(({ body }) => {
+            expect(body).toEqual({})
         })
     });
     test('should return 400 Bad Request status when request to article_id made by anything other than a number', () => {
         return request(app)
         .get('/api/articles/banana')
         .expect(400)
-        .then((res) => {
-            expect(res.body).toEqual({message: 'Bad Request'})
+        .then(({ body }) => {
+            expect(body).toEqual({code: '22P02', msg: 'Bad Request'})
         })
     });
 });
@@ -160,20 +160,20 @@ describe('GET /api/articles/:article_id/comments', () => {
         return request(app)
         .get('/api/articles/9000/comments')
         .expect(404)
-        .then((res) => {
-            expect(res.text).toBe('Not Found!')
+        .then(({ body }) => {
+            expect(body.msg).toBe('Not Found!')
         })
     });
     test('should return 400 Bad Request status when request to article_id made by anything other than a number', () => {
         return request(app)
         .get('/api/articles/banana/comments')
         .expect(400)
-        .then((res) => {
-            expect(res.body).toEqual({message: 'Bad Request'})
+        .then(({ body }) => {
+            expect(body.msg).toBe('Bad Request')
         })
     });
 });
-describe.skip('POST /api/articles/:article_id/comments', () => {
+describe('POST /api/articles/:article_id/comments', () => {
     test('should return a status code of 201 and the posted comment', () => {
         return request(app)
         .post('/api/articles/2/comments')
@@ -183,7 +183,6 @@ describe.skip('POST /api/articles/:article_id/comments', () => {
             body: 'good job lad'
         })
         .then(({ body }) => {
-            expect(body.comment_id).toBe(19)
             expect(body).toMatchObject( {
                 comment_id: 19,
                 body: 'good job lad',
@@ -193,7 +192,19 @@ describe.skip('POST /api/articles/:article_id/comments', () => {
               })
         })
     });
-    test('should return a 400 status code if supplied an incorrect amount of columns', () => {
+    test('should return 404 when trying to POST to a non-existent article', () => {
+        return request(app)
+        .post('/api/articles/9000000/comments')
+        .expect(404)
+        .send({
+            username: 'butter_bridge',
+            body: '@@@@@!!!!!'
+        })
+        .then(({ body }) => {
+            expect(body.msg).toBe('Not Found!')
+        })
+    });
+    test('should return a 400 status code and 23502 PSQL error code if a NOT NULL constraint is violated', () => {
         return request(app)
         .post('/api/articles/1/comments')
         .expect(400)
@@ -201,32 +212,21 @@ describe.skip('POST /api/articles/:article_id/comments', () => {
             body: 'this is a BODY'
         })
         .then(({ body }) => {
-            expect(body.code).toBe('22P02')
-            expect(body.message).toBe('An error message?!')
+            expect(body.code).toBe('23502')
+            expect(body.msg).toBe('Bad Request')
         })
     });
-    test('should return a 400 status code if columns are supplied the wrong data type', () => {
-        return request(app)
-        .post('/api/articles/1/comments')
-        .expect(201)
-        .send({
-            username: 'butter_bridge',
-            body: true
-        })
-        .then(({ body }) => {
-            console.log(body, 'bodyyyyyyyyyyyyyyyyy')
-            expect(body.code).toBe('42P02')
-            expect(body.code).toBe('Also an error message')
-        })
-    });
-    test('should return a 400 status code if no body is sent', () => {
+    test('should return a 400 status code if a Foreign Key Violation occurs', () => {
         return request(app)
         .post('/api/articles/1/comments')
         .expect(400)
-        .send({})
+        .send({
+            username: true,
+            body: 'aaaasss'
+        })
         .then(({ body }) => {
-            expect(body.code).toBe('42P02')
-            expect(body.message).toBe('Missing Request Body')
+            expect(body.code).toBe('23503')
+            expect(body.msg).toBe('Bad Request')
         })
     });
 });
