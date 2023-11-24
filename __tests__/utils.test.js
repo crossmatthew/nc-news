@@ -112,6 +112,6 @@ describe('checkExists', () => {
     })
   });
   test('should return a rejected promise--with the value undefined--when passed a non-existent article_id', () => {
-    return expect(checkExists('articles', 'article_id', 9000000)).rejects.toBe(undefined)
+    return expect(checkExists('articles', 'article_id', 9000000)).rejects.toEqual({status: 404, msg: 'Not Found!'})
     })
   });
