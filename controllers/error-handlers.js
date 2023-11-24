@@ -14,5 +14,6 @@ exports.handleFiveHundred = (err, req, res, next) => {
     res.status(500).send({ msg: 'Internal Server Error'})
 };
 exports.handleFourZeroFour = (req, res, next) => {
-    res.status(404).send('Not Found!')
+    if (!res.msg) res.msg = 'Not Found!';
+    res.status(404).send({ msg: res.msg })
 };
