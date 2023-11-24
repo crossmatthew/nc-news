@@ -68,6 +68,27 @@ describe('GET /api/articles', () => {
         })
     });
 });
+describe('GET /api/articles?topics=QUERIES', () => {
+    test('should return a 200 status OK and all articles on specified topic', () => {
+        return request(app)
+        .get('/api/articles?topic=mitch')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.articles.length).toBe(12)
+            body.articles.forEach((article) => {
+                expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url' ])
+            })
+        })
+    });
+    test('should return a 404 when passed a topic which doesn`t exist', () => {
+        return request(app)
+        .get('/api/articles?topic=notATopic1234')
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe('Not Found!')
+        })
+    });
+});
 describe('GET /api/articles/:article_id', () => {
     test('should return 200 OK status and an article object by id', () => {
         return request(app)
