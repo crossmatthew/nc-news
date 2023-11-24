@@ -43,3 +43,15 @@ exports.patchThisArticle = (req) => {
         return {article: data.rows[0]}
     })
 };
+exports.articlesQuery = (req) => {
+    const { query } = req
+    return checkExists('articles', 'topic', query.topic)
+    .then(() => {
+        return db.query(`
+        SELECT * FROM articles
+        WHERE topic = $1;`, [query.topic])
+    })
+    .then((data) => {
+        return {articles: data.rows}
+    })
+};
