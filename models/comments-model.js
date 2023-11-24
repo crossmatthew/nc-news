@@ -16,4 +16,20 @@ exports.commentsOfArticle = (req) => {
         }
     else {
         return data.rows
-    }})}
+    }})};
+exports.commentToPost = (req) => {
+    const { body, params } = req
+    const promises = [
+        checkExists('articles', 'article_id', params.article_id),
+        checkExists('users', 'username', body.username)
+    ]
+    return Promise.all(promises)
+    .then(() => {
+        return db.query(`
+        INSERT INTO comments (author, body, article_id)
+        VALUES ($1, $2, $3)
+        RETURNING *;`, [body.username, body.body, params.article_id])})
+    .then((data) => {
+            return data.rows[0]
+        })
+    }

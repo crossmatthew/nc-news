@@ -1,4 +1,4 @@
-const { commentsOfArticle } = require("../models/comments-model")
+const { commentsOfArticle, commentToPost } = require("../models/comments-model")
 
 exports.getComments = (req, res, next) => {
     commentsOfArticle(req)
@@ -8,4 +8,13 @@ exports.getComments = (req, res, next) => {
     .catch((err) => {
         next(err)
     })
-}
+};
+exports.postComment = (req, res, next) => {
+    commentToPost(req)
+    .then((data) => {
+        res.status(201).send(data)
+    })
+    .catch((err) => {
+        next(err)
+    })
+};

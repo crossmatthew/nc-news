@@ -16,8 +16,8 @@ describe('GET /api/notARoute', () => {
         return request(app)
         .get('/api/topicsz')
         .expect(404)
-        .then((res) => {
-            expect(res.text).toBe('Not Found!')
+        .then(({ body }) => {
+            expect(body.msg).toBe('Not Found!')
         })
     });
 });
@@ -91,16 +91,16 @@ describe('GET /api/articles/:article_id', () => {
         return request(app)
         .get('/api/articles/9000')
         .expect(404)
-        .then((res) => {
-            expect(res.text).toBe('Not Found!')
+        .then(({ body }) => {
+            expect(body.msg).toBe('Not Found!')
         })
     });
     test('should return 400 Bad Request status when request to article_id made by anything other than a number', () => {
         return request(app)
         .get('/api/articles/banana')
         .expect(400)
-        .then((res) => {
-            expect(res.body).toEqual({message: 'Bad Request'})
+        .then(({ body }) => {
+            expect(body).toEqual({code: '22P02', msg: 'Bad Request'})
         })
     });
 });
@@ -129,16 +129,83 @@ describe('GET /api/articles/:article_id/comments', () => {
         return request(app)
         .get('/api/articles/9000/comments')
         .expect(404)
-        .then((res) => {
-            expect(res.text).toBe('Not Found!')
+        .then(({ body }) => {
+            expect(body.msg).toBe('Not Found!')
         })
     });
     test('should return 400 Bad Request status when request to article_id made by anything other than a number', () => {
         return request(app)
         .get('/api/articles/banana/comments')
         .expect(400)
-        .then((res) => {
-            expect(res.body).toEqual({message: 'Bad Request'})
+        .then(({ body }) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    });
+});
+describe('POST /api/articles/:article_id/comments', () => {
+    test('should return a status code of 201 and the posted comment', () => {
+        return request(app)
+        .post('/api/articles/2/comments')
+        .expect(201)
+        .send({
+            username: 'butter_bridge',
+            body: 'good job lad'
+        })
+        .then(({ body }) => {
+            expect(body).toMatchObject( {
+                comment_id: 19,
+                body: 'good job lad',
+                article_id: 2,
+                author: 'butter_bridge',
+                votes: 0,
+              })
+        })
+    });
+    test('should return 404 when trying to POST to a non-existent article', () => {
+        return request(app)
+        .post('/api/articles/9000000/comments')
+        .expect(404)
+        .send({
+            username: 'butter_bridge',
+            body: '@@@@@!!!!!'
+        })
+        .then(({ body }) => {
+            expect(body.msg).toBe('Not Found!')
+        })
+    });
+    test('should return a 404 if a username is not provided (cannot be found)', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .expect(404)
+        .send({
+            body: 'this is a BODY'
+        })
+        .then(({ body }) => {
+            expect(body.msg).toBe('Not Found!')
+        })
+    });
+    test('should return a 404 status code if a user does not exist', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .expect(404)
+        .send({
+            username: 'blanko',
+            body: 'aaaasss'
+        })
+        .then(({ body }) => {
+            expect(body.msg).toBe('Not Found!')
+        })
+    });
+    test('should return a 400 status code and 23502 PSQL error code if a NOT NULL constraint is violated', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .expect(400)
+        .send({
+            username: 'icellusedkars'
+        })
+        .then(({ body }) => {
+            expect(body.code).toBe('23502')
+            expect(body.msg).toBe('Bad Request')
         })
     });
 });

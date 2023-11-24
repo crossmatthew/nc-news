@@ -5,6 +5,12 @@ function checkExists(table, column, value) {
     return db.query(queryStr, [value])
     .then((result) => {
         if (result.rows.length === 0) {
+            return Promise.reject({status: 404, msg: 'Not Found!'})
+            } else {
+                return result.rows
+            }
+        })
+    }
             return Promise.reject()
         } else {
             return result.comments = []
