@@ -213,42 +213,41 @@ describe('DELETE /api/comments/:comment_id', () => {
     test('should return a status code of 204 after a comment has been deleted by comment_id', () => {
         return request(app).delete('/api/comments/1').expect(204)
         })
+        test('should return 404 status code if trying to delete a non-existent comment', () => {
+            return request(app)
+            .delete('/api/comments/333000333')
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe('Not Found!')
+            })  
+        });
+        test('should return 400 status code if trying to delete a comment without passing comment_id as a number', () => {
+            return request(app)
+            .delete('/api/comments/comment')
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe('Bad Request')
+            })
     });
-    test('should return 404 status code if trying to delete a non-existent comment', () => {
-        return request(app)
-        .delete('/api/comments/333000333')
-        .expect(404)
-        .then(({ body }) => {
-            expect(body.msg).toBe('Not Found!')
-        })  
-    });
-    test('should return 400 status code if trying to delete a comment without passing comment_id as a number', () => {
-        return request(app)
-        .delete('/api/comments/comment')
-        .expect(400)
-        .then(({ body }) => {
-            expect(body.msg).toBe('Bad Request')
-        })
-    });
-describe('PATCH /api/articles/:article_id', () => {
-    test('should return 200 OK status code and respond with votes increased in the updated article', () => {
+    describe('PATCH /api/articles/:article_id', () => {
+        test('should return 200 OK status code and respond with votes increased in the updated article', () => {
             return request(app)
             .patch('/api/articles/6')
             .expect(200)
             .send({ inc_votes: 5 })
-        .then(({ body }) => {
-            expect(body.article).toEqual({
-                article_id: 6,
-                title: "A",
-                topic: "mitch",
-                author: "icellusedkars",
-                body: "Delicious tin of cat food",
-                created_at: '2020-10-18T01:00:00.000Z',
-                votes: 5,
-                article_img_url:
-                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            .then(({ body }) => {
+                expect(body.article).toEqual({
+                    article_id: 6,
+                    title: "A",
+                    topic: "mitch",
+                    author: "icellusedkars",
+                    body: "Delicious tin of cat food",
+                    created_at: '2020-10-18T01:00:00.000Z',
+                    votes: 5,
+                    article_img_url:
+                    "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                })
             })
-        })
     });
     test('should return 200 OK status code and respond with the votes decreased in the updated article', () => {
             return request(app)
@@ -265,8 +264,8 @@ describe('PATCH /api/articles/:article_id', () => {
                 created_at: '2020-07-09T20:11:00.000Z',
                 votes: -10,
                 article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
-              }
-        )
+            }
+            )
         })
     });
     test('should return 404 if trying to PATCH a non-existing article (invalid number)', () => {
@@ -297,4 +296,18 @@ describe('PATCH /api/articles/:article_id', () => {
             expect(body.msg).toBe('Bad Request')
         })
     });
+});
+});
+describe('GET /api/users', () => {
+        test('should return 200 OK status code and a body of all users', () => {
+            return request(app)
+            .get('/api/users')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.users.length).toBe(4)
+                body.users.forEach((user) => {
+                    expect(Object.keys(user)).toEqual(['username', 'name', 'avatar_url'])
+                })
+            })
+        });
 });
