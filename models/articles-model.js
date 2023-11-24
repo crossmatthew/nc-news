@@ -1,4 +1,5 @@
 const db = require('../db/connection');
+const checkExists = require('../utils/checkExists');
 
 exports.specificArticle = (req) => {
     const { params } = req
@@ -27,4 +28,18 @@ exports.allArticles = (req) => {
     .then((data) => {
         return data.rows
     })
-}
+};
+exports.patchThisArticle = (req) => {
+    const { body, params } = req
+    return checkExists('articles', 'article_id', params.article_id)
+    .then(() => {
+        return db.query(`
+        UPDATE articles
+        SET votes = votes + $1
+        WHERE article_id = $2
+        RETURNING *;`, [body.inc_votes, params.article_id])
+    })
+    .then((data) => {
+        return {article: data.rows[0]}
+    })
+};

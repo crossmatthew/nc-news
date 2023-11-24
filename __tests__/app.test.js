@@ -230,3 +230,71 @@ describe('DELETE /api/comments/:comment_id', () => {
             expect(body.msg).toBe('Bad Request')
         })
     });
+describe('PATCH /api/articles/:article_id', () => {
+    test('should return 200 OK status code and respond with votes increased in the updated article', () => {
+            return request(app)
+            .patch('/api/articles/6')
+            .expect(200)
+            .send({ inc_votes: 5 })
+        .then(({ body }) => {
+            expect(body.article).toEqual({
+                article_id: 6,
+                title: "A",
+                topic: "mitch",
+                author: "icellusedkars",
+                body: "Delicious tin of cat food",
+                created_at: '2020-10-18T01:00:00.000Z',
+                votes: 5,
+                article_img_url:
+                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            })
+        })
+    });
+    test('should return 200 OK status code and respond with the votes decreased in the updated article', () => {
+            return request(app)
+            .patch('/api/articles/1')
+            .expect(200)
+            .send({ inc_votes: -110 })
+        .then(({ body }) => {
+            expect(body.article).toEqual({
+                article_id: 1,
+                title: 'Living in the shadow of a great man',
+                topic: 'mitch',
+                author: 'butter_bridge',
+                body: 'I find this existence challenging',
+                created_at: '2020-07-09T20:11:00.000Z',
+                votes: -10,
+                article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+              }
+        )
+        })
+    });
+    test('should return 404 if trying to PATCH a non-existing article (invalid number)', () => {
+        return request(app)
+        .patch('/api/articles/6000')
+        .expect(404)
+        .send({ inc_votes: 3 })
+        .then(({ body }) => {
+            expect(body.msg).toBe('Not Found!')
+        })
+    });
+    test('should return a 400 status code if trying to PATCH a non-existing article (by not passing a number)', () => {
+        return request(app)
+        .patch('/api/articles/pasta')
+        .expect(400)
+        .send({ inc_votes: 3 })
+        .then(({ body }) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    });
+    test('should return a 400 status code if trying to PATCH votes with a data type that is not an INT', () => {
+        return request(app)
+        .patch('/api/articles/3')
+        .expect(400)
+        .send({ inc_votes: 'one million votes' })
+        .then(({ body }) => {
+            expect(body.code).toBe('22P02')
+            expect(body.msg).toBe('Bad Request')
+        })
+    });
+});
