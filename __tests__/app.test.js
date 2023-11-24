@@ -209,9 +209,10 @@ describe('POST /api/articles/:article_id/comments', () => {
         })
     });
 });
-describe.skip('DELETE /api/comments/:comment_id', () => {
+describe('DELETE /api/comments/:comment_id', () => {
     test('should return a status code of 204 after a comment has been deleted by comment_id', () => {
-        return request(app).delete('/api/comments/3').expect(204)
+        return request(app).delete('/api/comments/1').expect(204)
+        })
     });
     test('should return 404 status code if trying to delete a non-existent comment', () => {
         return request(app)
@@ -229,4 +230,3 @@ describe.skip('DELETE /api/comments/:comment_id', () => {
             expect(body.msg).toBe('Bad Request')
         })
     });
-});
