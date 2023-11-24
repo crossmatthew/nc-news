@@ -40,6 +40,6 @@ exports.patchThisArticle = (req) => {
         RETURNING *;`, [body.inc_votes, params.article_id])
     })
     .then((data) => {
-        return data.rows[0]
+        return {article: data.rows[0]}
     })
 };
