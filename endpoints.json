@@ -60,5 +60,37 @@
         }
       ]
     }
+  },
+"POST /api/articles/:article_id/comments": {
+  "description": "takes a username and body, and allows comments to be posted to specific articles",
+  "queries": [],
+  "exampleResponse": {
+    "articles": [
+      {
+        "comment_id": "14",
+        "author": "weegembump",
+        "body": "Text from the article..",
+        "created_at": "2018-05-30T15:59:13.341Z",
+        "votes": 0,
+        "article_id": 6
+      }
+    ]
   }
+},
+"PATCH /api/articles/:article_id/comments": {
+  "description": "allows votes for each article to be increased or decreased",
+  "queries": [],
+  "exampleResponse": {
+    "articles": [
+      {
+        "comment_id": "14",
+        "author": "weegembump",
+        "body": "Text from the article..",
+        "created_at": "2018-05-30T15:59:13.341Z",
+        "votes": 0,
+        "article_id": 6
+      }
+    ]
+  }
+}
 }
