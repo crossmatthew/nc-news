@@ -88,6 +88,14 @@ describe('GET /api/articles?topics=QUERIES', () => {
             expect(body.msg).toBe('Not Found!')
         })
     });
+    test('should return a 404 when passed a topic which doesn`t exist', () => {
+        return request(app)
+        .get('/api/articles?topic=paper')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.articles).toEqual([])
+        })
+    });
 });
 describe('GET /api/articles/:article_id', () => {
     test('should return 200 OK status and an article object by id', () => {
