@@ -45,13 +45,18 @@ exports.patchThisArticle = (req) => {
 };
 exports.articlesQuery = (req) => {
     const { query } = req
-    return checkExists('articles', 'topic', query.topic)
-    .then(() => {
-        return db.query(`
-        SELECT * FROM articles
-        WHERE topic = $1;`, [query.topic])
-    })
-    .then((data) => {
-        return {articles: data.rows}
-    })
+    return checkExists('topics', 'slug', query.topic)
+        .then(() => {
+            return db.query(`
+                SELECT * FROM articles
+                WHERE topic = $1;`, [query.topic])
+        })
+        .then((data) => {
+            if (data.rows.length === 0) {
+                if (query.topic) {
+                    return {status: 200, articles: []}
+                }
+            }
+            return {articles: data.rows}
+        })
 };
