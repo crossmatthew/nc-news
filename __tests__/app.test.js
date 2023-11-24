@@ -216,7 +216,7 @@ describe('PATCH /api/articles/:article_id', () => {
             .expect(200)
             .send({ inc_votes: 5 })
         .then(({ body }) => {
-            expect(body).toEqual({
+            expect(body.article).toEqual({
                 article_id: 6,
                 title: "A",
                 topic: "mitch",
@@ -235,7 +235,7 @@ describe('PATCH /api/articles/:article_id', () => {
             .expect(200)
             .send({ inc_votes: -110 })
         .then(({ body }) => {
-            expect(body).toEqual({
+            expect(body.article).toEqual({
                 article_id: 1,
                 title: 'Living in the shadow of a great man',
                 topic: 'mitch',
