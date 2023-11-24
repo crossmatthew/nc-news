@@ -19,10 +19,11 @@ exports.commentsOfArticle = (req) => {
     }})};
 exports.commentToPost = (req) => {
     const { body, params } = req
-    if (!body) {
-        return Promise.reject()
-    }
-    return checkExists('articles', 'article_id', params.article_id)
+    const promises = [
+        checkExists('articles', 'article_id', params.article_id),
+        checkExists('users', 'username', body.username)
+    ]
+    return Promise.all(promises)
     .then(() => {
         return db.query(`
         INSERT INTO comments (author, body, article_id)
