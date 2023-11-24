@@ -15,7 +15,6 @@ exports.postComment = (req, res, next) => {
         res.status(201).send(data)
     })
     .catch((err) => {
-        console.log(err)
         next(err)
     })
 };
