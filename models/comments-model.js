@@ -16,7 +16,7 @@ exports.commentsOfArticle = (req) => {
         }
     else {
         return data.rows
-    }})};
+}})};
 exports.commentToPost = (req) => {
     const { body, params } = req
     const promises = [
@@ -32,4 +32,12 @@ exports.commentToPost = (req) => {
     .then((data) => {
             return data.rows[0]
         })
-    }
+};
+exports.deleteThisComment = (req) => {
+    const { params } = req
+    return checkExists('comments', 'comment_id', params.comment_id)
+    .then(() => {
+        return db.query(`
+        DELETE FROM comments WHERE comment_id = $1;`, [params.comment_id])
+    })
+};
