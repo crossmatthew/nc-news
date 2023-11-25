@@ -1,10 +1,9 @@
  <a name="readme-start"></a>
- <h3 align="center"> Northcoders News API</h3>
 
+### Northcoders News API
 
-<p align="center">
-<a href="https://nc-news-js3f.onrender.com/api">View Demo</a>
-</p>
+<a href="https://nc-news-js3f.onrender.com/api">View Hosted Version</a>
+
 
 ## About the Project
 
@@ -61,7 +60,7 @@ Follow these instructions to get a local copy up-and-running.
     1) **.env.test** should contain:
         
             PGDATABASE=nc_news_test;
-            
+
     2) **.env.development** should contain:
     
             PGDATABASE=nc_news;
