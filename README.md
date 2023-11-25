@@ -82,4 +82,4 @@ A list of all endpoints are available on http://localhost:9090/api or in the end
 
 Thank you to Ali, Hev, Michael, MKD and Saima for providing feedback and managing pull requests.
 
-<p align="right"><a href="readme-start">Back to top</a></p>
+<p align="right"><a href="#readme-start">Back to top</a></p>
