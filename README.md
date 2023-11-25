@@ -20,10 +20,12 @@ Follow these instructions to get a local copy up-and-running.
 ## Installation
 
 1) Clone this repo: 
-    > https://github.com/crossmatthew/nc-news.git
+
+         https://github.com/crossmatthew/nc-news.git
 
 2) Install dependencies:
-    > npm install
+            
+             npm install
     <details>
     <summary>List of Dependencies</summary>
 
@@ -48,20 +50,21 @@ Follow these instructions to get a local copy up-and-running.
 3) Create .env Files
 
     To connect locally to the two databases create two .env files in the project root directory:
-    > .env.test
-    >
-    >.env.development
+            
+            .env.test
+            .env.development
     
     Both files will need to have the environment variable PGDATABASE=,
 
     _The database names are found at the following path: ./db/setup.sql_
 
-    1) .env.test should contain:
+    1) **.env.test** should contain:
         
-        > PGDATABASE=nc_news_test;
-    2) .env.development should contain:
+            PGDATABASE=nc_news_test;
+            
+    2) **.env.development** should contain:
     
-        > PGDATABASE=nc_news;
+            PGDATABASE=nc_news;
 
 ## Set-up databases and localhost server
 
