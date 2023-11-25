@@ -102,6 +102,14 @@ describe('GET /api/articles?sort_by=ANY_EXISTING_COLUMN&ORDER=ASC_or_DESC', () =
     test('should return 200 status code and articles sorted by COLUMN NAME, defaulted to a descending order with order not provided', () => {
 
 	});
+    test('should return a 200 status code and articles sorted by created_at in DESC order when sort_by= is present but with no column provided', () => {
+        return request(app)
+        .get('/api/articles?sort_by=')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body).toBeSorted({ descending: true, key: 'created_at' })
+        })
+	});
 	test('should return a 200 status code and articles sorted by COLUMN NAME in ASC order', () => {
 
 	});
