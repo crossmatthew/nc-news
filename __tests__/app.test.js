@@ -97,6 +97,24 @@ describe('GET /api/articles?topics=QUERIES', () => {
         })
     });
 });
+describe('GET /api/articles?sort_by=ANY_EXISTING_COLUMN&ORDER=ASC_or_DESC', () => {
+    // examples: /api/articles?sort_by=COLUMN&order=ASC;
+    test('should return 200 status code and articles sorted by COLUMN NAME, defaulted to a descending order with order not provided', () => {
+
+	});
+	test('should return a 200 status code and articles sorted by COLUMN NAME in ASC order', () => {
+
+	});
+	test('should return a 200 status code and articles sorted by COLUMN NAME in DESC order', () => {
+
+	});
+	test('should return a 400 status code when a non-existing column name is provided', () => {
+
+	});
+    test('should return a 400 status code if sort_by is valid, but order is invalid', () => {
+        
+    });
+});
 describe('GET /api/articles/:article_id', () => {
     test('should return 200 OK status and an article object by id', () => {
         return request(app)
