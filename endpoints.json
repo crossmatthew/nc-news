@@ -40,7 +40,6 @@
   },
   "GET /api/articles/:article_id": {
     "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
         {
@@ -76,7 +75,6 @@
   },
   "POST /api/articles/:article_id/comments": {
   "description": "takes a username and body, and allows comments to be posted to specific articles",
-  "queries": [],
   "exampleResponse": {
     "articles": [
       {
@@ -92,7 +90,6 @@
 },
 "PATCH /api/articles/:article_id/comments": {
   "description": "allows votes for each article to be increased or decreased",
-  "queries": [],
   "exampleResponse": {
     "articles": [
       {
