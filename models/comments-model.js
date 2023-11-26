@@ -1,27 +1,28 @@
 const db = require('../db/connection');
-const checkExists = require('../utils/checkExists');
+const checkValueExists = require('../utils/checkValueExists');
 
 exports.commentsOfArticle = (req) => {
     const { params } = req
-    if (typeof (params.article_id * 1) !== 'number') {
-        return Promise.reject()
-    }
-    return db.query(`
-    SELECT * FROM comments
-    WHERE article_id = $1
-    ORDER BY created_at DESC;`, [params.article_id])
+    return checkValueExists('articles', 'article_id', params.article_id)
+    .then(() => {
+        return db.query(`
+        SELECT * FROM comments
+        WHERE article_id = $1
+        ORDER BY created_at DESC;`, [params.article_id])
+    })
     .then((data) => {
         if (!data.rows.length) {
-            return checkExists('articles', 'article_id', params.article_id)
+            return checkValueExists('articles', 'article_id', params.article_id)
         }
     else {
         return data.rows
 }})};
 exports.commentToPost = (req) => {
     const { body, params } = req
+    if (!body.username) return Promise.reject({status: 400})
     const promises = [
-        checkExists('articles', 'article_id', params.article_id),
-        checkExists('users', 'username', body.username)
+        checkValueExists('articles', 'article_id', params.article_id),
+        checkValueExists('users', 'username', body.username)
     ]
     return Promise.all(promises)
     .then(() => {
@@ -35,7 +36,7 @@ exports.commentToPost = (req) => {
 };
 exports.deleteThisComment = (req) => {
     const { params } = req
-    return checkExists('comments', 'comment_id', params.comment_id)
+    return checkValueExists('comments', 'comment_id', params.comment_id)
     .then(() => {
         return db.query(`
         DELETE FROM comments WHERE comment_id = $1;`, [params.comment_id])
