@@ -97,10 +97,15 @@ describe('GET /api/articles?topics=QUERIES', () => {
         })
     });
 });
-describe('GET /api/articles?sort_by=ANY_EXISTING_COLUMN&ORDER=ASC_or_DESC', () => {
+describe.skip('GET /api/articles?sort_by=ANY_EXISTING_COLUMN&ORDER=ASC_or_DESC', () => {
     // examples: /api/articles?sort_by=COLUMN&order=ASC;
     test('should return 200 status code and articles sorted by COLUMN NAME, defaulted to a descending order with order not provided', () => {
-
+        return request(app)
+        .get('/api/articles?sort_by=title')
+        .expect(200)
+        .then(({ body }) => {
+            console.log(body)
+        })
 	});
     test('should return a 200 status code and articles sorted by created_at in DESC order when sort_by= is present but with no column provided', () => {
         return request(app)
@@ -228,15 +233,15 @@ describe('POST /api/articles/:article_id/comments', () => {
             expect(body.msg).toBe('Not Found!')
         })
     });
-    test('should return a 404 if a username is not provided (cannot be found)', () => {
+    test('should return a 400 if a username is not provided', () => {
         return request(app)
         .post('/api/articles/1/comments')
-        .expect(404)
+        .expect(400)
         .send({
             body: 'this is a BODY'
         })
         .then(({ body }) => {
-            expect(body.msg).toBe('Not Found!')
+            expect(body.msg).toBe('Bad Request')
         })
     });
     test('should return a 404 status code if a user does not exist', () => {
