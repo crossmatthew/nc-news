@@ -5,7 +5,7 @@ function checkColumnExists(table, column) {
     return db.query(queryStr)
     .then((result) => {
         if (result.rows.length === 0) {
-            return Promise.reject()
+            return Promise.reject({status: 400})
             } else {
                 return []
             }
