@@ -1,9 +1,10 @@
 const db = require('../db/connection');
-const checkExists = require('../utils/checkExists');
+const checkValueExists = require('../utils/checkValueExists');
+const checkColumnExists = require('../utils/checkColumnExists');
 
 exports.specificArticle = (req) => {
     const { params } = req
-    return checkExists('articles', 'article_id', params.article_id)
+    return checkValueExists('articles', 'article_id', params.article_id)
     .then(() => {
         return db.query(`
         SELECT articles.*, COUNT(comments.comment_id) AS comment_count
@@ -19,20 +20,29 @@ exports.specificArticle = (req) => {
     })
 };
 exports.allArticles = (req) => {
-    return db.query(`
-    SELECT articles.article_id, articles.title, articles.author, articles.created_at, articles.article_img_url, articles.votes, articles.topic,
-    COUNT(comments.comment_id) AS comment_count
-    FROM articles LEFT JOIN comments
-    ON articles.article_id = comments.article_id
-    GROUP BY articles.article_id
-    ORDER BY created_at DESC;`)
+    let { sort_by='created_at', order='DESC'} = req.query
+    if (sort_by === '') sort_by = 'created_at';
+    return checkColumnExists('articles', `${sort_by}`)
+    .then(() => {
+        if (order.toUpperCase() !== 'ASC' && order.toUpperCase() !== 'DESC') {
+            return Promise.reject({status: 400})
+        }
+    })
+    .then(() => {
+        const queryStr = `SELECT articles.article_id, articles.title, articles.author, articles.created_at, articles.article_img_url, articles.votes, articles.topic, COUNT(comments.comment_id) AS comment_count
+        FROM articles LEFT JOIN comments
+        ON articles.article_id = comments.article_id
+        GROUP BY articles.article_id
+        ORDER BY articles.${sort_by} ${order};`
+        return db.query(queryStr)
+    })
     .then((data) => {
-        return data.rows
+        return { articles: data.rows }
     })
 };
 exports.patchThisArticle = (req) => {
     const { body, params } = req
-    return checkExists('articles', 'article_id', params.article_id)
+    return checkValueExists('articles', 'article_id', params.article_id)
     .then(() => {
         return db.query(`
         UPDATE articles
@@ -46,7 +56,7 @@ exports.patchThisArticle = (req) => {
 };
 exports.articlesQuery = (req) => {
     const { query } = req
-    return checkExists('topics', 'slug', query.topic)
+    return checkValueExists('topics', 'slug', query.topic)
         .then(() => {
             return db.query(`
                 SELECT * FROM articles
@@ -58,6 +68,6 @@ exports.articlesQuery = (req) => {
                     return {status: 200, articles: []}
                 }
             }
-            return {articles: data.rows}
+            return { articles: data.rows }
         })
 };

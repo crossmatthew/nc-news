@@ -63,8 +63,8 @@ describe('GET /api/articles', () => {
         .get('/api/articles')
         .expect(200)
         .then(({ body }) => {
-            expect(body.length).toBe(13)
-            expect(body).toBeSorted({ descending: true, key: 'created_at'})
+            expect(body.articles.length).toBe(13)
+            expect(body.articles).toBeSorted({ descending: true, key: 'created_at'})
         })
     });
 });
@@ -94,6 +94,72 @@ describe('GET /api/articles?topics=QUERIES', () => {
         .expect(200)
         .then(({ body }) => {
             expect(body.articles).toEqual([])
+        })
+    });
+});
+describe('GET /api/articles?sort_by=ANY_EXISTING_COLUMN&ORDER=ASC_or_DESC', () => {
+    test('should return 200 status code and articles sorted by COLUMN NAME, defaulted to a descending order with order not provided', () => {
+        return request(app)
+        .get('/api/articles?sort_by=title')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.articles.length).toBe(13)
+            expect(body.articles).toBeSorted({ descending: true, key: 'title' })
+            body.articles.forEach((article) => {
+                expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'author', 'created_at', 'article_img_url', 'votes', 'topic', 'comment_count'])
+            })
+        })
+	});
+    test('should return a 200 status code and articles sorted by created_at in DESC order when sort_by= is present but with no column provided', () => {
+        return request(app)
+        .get('/api/articles?sort_by=')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.articles.length).toBe(13)
+            expect(body.articles).toBeSorted({ descending: true, key: 'created_at' })
+            body.articles.forEach((article) => {
+                expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'author', 'created_at', 'article_img_url', 'votes', 'topic', 'comment_count'])
+            })
+        })
+	});
+	test('should return a 200 status code and articles sorted by COLUMN NAME in ASC order', () => {
+        return request(app)
+        .get('/api/articles?sort_by=author&order=ASC')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.articles.length).toBe(13)
+            expect(body.articles).toBeSorted({ descending: false, key: 'author' })
+            body.articles.forEach((article) => {
+                expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'author', 'created_at', 'article_img_url', 'votes', 'topic', 'comment_count'])
+            })
+        })
+	});
+	test('should return a 200 status code and articles sorted by COLUMN NAME in DESC order', () => {
+        return request(app)
+        .get('/api/articles?sort_by=author&order=desc')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.articles.length).toBe(13)
+            expect(body.articles).toBeSorted({ descending: true, key: 'author' })
+            body.articles.forEach((article) => {
+                expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'author', 'created_at', 'article_img_url', 'votes', 'topic', 'comment_count'])
+            })
+        })
+	});
+	test('should return a 400 status code when a non-existing column name is provided', () => {
+        return request(app)
+        .get('/api/articles?sort_by=noColumnHere')
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+	});
+    test('should return a 400 status code if sort_by is valid, but order is invalid', () => {
+        return request(app)
+        .get('/api/articles?sort_by=author&order=UpsideDown')
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe('Bad Request')
         })
     });
 });
@@ -202,15 +268,15 @@ describe('POST /api/articles/:article_id/comments', () => {
             expect(body.msg).toBe('Not Found!')
         })
     });
-    test('should return a 404 if a username is not provided (cannot be found)', () => {
+    test('should return a 400 if a username is not provided', () => {
         return request(app)
         .post('/api/articles/1/comments')
-        .expect(404)
+        .expect(400)
         .send({
             body: 'this is a BODY'
         })
         .then(({ body }) => {
-            expect(body.msg).toBe('Not Found!')
+            expect(body.msg).toBe('Bad Request')
         })
     });
     test('should return a 404 status code if a user does not exist', () => {

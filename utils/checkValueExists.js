@@ -1,6 +1,6 @@
 const db = require('../db/connection');
 const format = require('pg-format');
-function checkExists(table, column, value) {
+function checkValueExists(table, column, value) {
     const queryStr = format(`SELECT * FROM %I WHERE %I = $1`, table, column)
     return db.query(queryStr, [value])
     .then((result) => {
@@ -11,4 +11,4 @@ function checkExists(table, column, value) {
             }
         })
     };
-module.exports = checkExists
+module.exports = checkValueExists
