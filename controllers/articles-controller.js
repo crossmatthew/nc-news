@@ -10,13 +10,13 @@ exports.getArticle = (req, res, next) => {
     })
 };
 exports.getAllArticles = (req, res, next) => {
-    if (req.query.sort_by && req.query.sort_by !== '') return articlesSortBy(req)
-    .then((data) => {
-        res.status(200).send(data)
-    })
-    .catch((err) => {
-        next(err)
-    })
+    // if (req.query.sort_by && req.query.sort_by !== '') return articlesSortBy(req)
+    // .then((data) => {
+    //     res.status(200).send(data)
+    // })
+    // .catch((err) => {
+    //     next(err)
+    // })
     if (req.query.topic) return articlesQuery(req)
     .then((data) => {
         res.status(200).send(data)
@@ -24,7 +24,7 @@ exports.getAllArticles = (req, res, next) => {
     .catch((err) => {
         next(err)
     })
-    if (!req.query.topic || req.query.sort_by === '') return allArticles(req)
+    return allArticles(req)
     .then((data) => {
         res.status(200).send(data)
     })
