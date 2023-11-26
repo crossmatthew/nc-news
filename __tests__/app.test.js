@@ -98,7 +98,6 @@ describe('GET /api/articles?topics=QUERIES', () => {
     });
 });
 describe('GET /api/articles?sort_by=ANY_EXISTING_COLUMN&ORDER=ASC_or_DESC', () => {
-    // examples: /api/articles?sort_by=COLUMN&order=ASC;
     test('should return 200 status code and articles sorted by COLUMN NAME, defaulted to a descending order with order not provided', () => {
         return request(app)
         .get('/api/articles?sort_by=title')
