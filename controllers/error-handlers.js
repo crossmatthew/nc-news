@@ -5,7 +5,10 @@ exports.handlePsqlErrors = (err, req, res, next) => {
     next(err)
 };
 exports.handleCustomErrors = (err, req, res, next) => {
-    if (err.status >= 400 && err.status < 500) {
+    switch (err.status >= 400 && err.status < 500) {
+        case err.status === 400:
+            res.status(err.status).send({ msg: 'Bad Request'})
+        default:
             res.status(err.status).send({ msg: err.msg })
     }
     next(err)
