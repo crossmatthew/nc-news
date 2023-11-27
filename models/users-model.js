@@ -9,7 +9,6 @@ exports.allUsers = (req) => {
 };
 exports.specificUser = (req) => {
     const { params } = req
-    console.log(params.username)
     return checkValueExists('users', 'username', params.username)
     .then(() => {
         return db.query(`
