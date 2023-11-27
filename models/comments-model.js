@@ -42,3 +42,17 @@ exports.deleteThisComment = (req) => {
         DELETE FROM comments WHERE comment_id = $1;`, [params.comment_id])
     })
 };
+exports.patchThisComment = (req) => {
+    const { body, params } = req
+    return checkValueExists('comments', 'comment_id', params.comment_id)
+    .then(() => {
+        return db.query(`
+        UPDATE comments
+        SET votes = votes + $1
+        WHERE comment_id = $2
+        RETURNING *;`, [body.inc_votes, params.comment_id])
+    })
+    .then((data) => {
+        return {comment: data.rows[0]}
+    })
+};
