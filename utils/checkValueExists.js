@@ -11,4 +11,4 @@ function checkValueExists(table, column, value) {
             }
         })
     };
-module.exports = checkValueExists
+module.exports = checkValueExists;
