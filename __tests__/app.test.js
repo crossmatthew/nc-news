@@ -406,7 +406,7 @@ describe('GET /api/users', () => {
             })
         });
 });
-describe.only('GET /api/users/:username', () => {
+describe('GET /api/users/:username', () => {
     test('should return 200 OK status and a user object by username', () => {
         return request(app)
         .get('/api/users/butter_bridge')
