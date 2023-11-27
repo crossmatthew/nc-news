@@ -406,3 +406,26 @@ describe('GET /api/users', () => {
             })
         });
 });
+describe.only('GET /api/users/:username', () => {
+    test('should return 200 OK status and a user object by username', () => {
+        return request(app)
+        .get('/api/users/butter_bridge')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body).toMatchObject({user: {
+                username: 'butter_bridge',
+                name: 'jonny',
+                avatar_url:
+                  'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'
+              }})
+        })
+    });
+    test('should return 404 Not Found status when request to a non-existent user', () => {
+        return request(app)
+        .get('/api/users/WEAREAUSERNAME')
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe('Not Found!')
+        })
+    });
+});
