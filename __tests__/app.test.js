@@ -325,6 +325,68 @@ describe('DELETE /api/comments/:comment_id', () => {
         })
 });
 });
+describe('PATCH /api/comments/:comment', () => {
+    test('should return 200 OK status code and respond with votes increased in the updated comment', () => {
+        return request(app)
+        .patch('/api/comments/6')
+        .expect(200)
+        .send({ inc_votes: 5 })
+        .then(({ body }) => {
+            expect(body.comment).toEqual({
+                comment_id: 6,
+                body: 'I hate streaming eyes even more',
+                article_id: 1,
+                author: 'icellusedkars',
+                votes: 5,
+                created_at: '2020-04-11T21:02:00.000Z'
+              })
+        })
+    });
+    test('should return 200 OK status code and respond with the votes decreased in the updated comment', () => {
+            return request(app)
+            .patch('/api/comments/1')
+            .expect(200)
+            .send({ inc_votes: -110 })
+        .then(({ body }) => {
+            expect(body.comment).toEqual({
+                comment_id: 1,
+                body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                article_id: 9,
+                author: 'butter_bridge',
+                votes: -94,
+                created_at: '2020-04-06T12:17:00.000Z'
+            })
+        })
+    });
+    test('should return 404 if trying to PATCH a non-existing comment (invalid number)', () => {
+        return request(app)
+        .patch('/api/comments/6000')
+        .expect(404)
+        .send({ inc_votes: 3 })
+        .then(({ body }) => {
+            expect(body.msg).toBe('Not Found!')
+        })
+    });
+    test('should return a 400 status code if trying to PATCH a non-existing article (by not passing a number)', () => {
+        return request(app)
+        .patch('/api/comments/pasta')
+        .expect(400)
+        .send({ inc_votes: 3 })
+        .then(({ body }) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    });
+    test('should return a 400 status code if trying to PATCH votes with a data type that is not an INT', () => {
+        return request(app)
+        .patch('/api/comments/3')
+        .expect(400)
+        .send({ inc_votes: 'one million votes' })
+        .then(({ body }) => {
+            expect(body.code).toBe('22P02')
+            expect(body.msg).toBe('Bad Request')
+        })
+    });
+});
 describe('PATCH /api/articles/:article_id', () => {
     test('should return 200 OK status code and respond with votes increased in the updated article', () => {
         return request(app)
