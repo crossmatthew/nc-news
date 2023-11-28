@@ -71,3 +71,30 @@ exports.articlesQuery = (req) => {
             return { articles: data.rows }
         })
 };
+exports.articleToPost = (req) => {
+    const { body } = req
+    // if (!body.username || !body.topic) return Promise.reject({status: 400})
+    // const promises = [
+    //     checkValueExists('topics', 'slug', body.topic),
+    //     checkValueExists('users', 'username', body.username)
+    // ]
+    // return Promise.all(promises)
+    // .then(() => {
+        return db.query(`
+        INSERT INTO articles (author, title, body, topic, article_img_url)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING *`, [body.author, body.title, body.body, body.topic, body.article_img_url])
+        .then((data) => {
+            return db.query(`
+        SELECT articles.*, COUNT(comments.comment_id) AS comment_count
+        FROM articles LEFT JOIN comments
+        ON articles.article_id = comments.article_id
+        WHERE articles.article_id = $1
+        GROUP BY articles.article_id
+        ORDER BY created_at DESC
+        `, [14])
+        .then((data) => {
+            return { article: data.rows[0] }
+        })
+    })
+};
