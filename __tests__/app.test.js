@@ -68,6 +68,76 @@ describe('GET /api/articles', () => {
         })
     });
 });
+describe('POST /api/articles', () => {
+    test('should return a status code of 201 and the posted article', () => {
+        return request(app)
+        .post('/api/articles')
+        .expect(201)
+        .send({
+            author: 'icellusedkars',
+            title: 'Bring Back the Sabre-Tooth',
+            body: 'The possibility of bringing these long extinct creatures back, once a science fiction fantasy, is now closer to reality than ever before through a process known as “de-extinction.”',
+            topic: 'cats'
+        })
+        .then(({ body }) => {
+            expect(body.article.article_id).toBe(14)
+            expect(Object.keys(body.article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count'])
+        })
+    });
+    test('should return 400 when trying to POST with a non-existing author(user), violation of foreign key', () => {
+        return request(app)
+        .post('/api/articles')
+        .expect(400)
+        .send({
+            author: 'John Hammond',
+            title: 'Pancakes...Not just for Pancake Day',
+            body: 'Simply astonishing',
+            topic: 'cats'
+        })
+        .then(({ body }) => {
+            expect(body.code).toBe('23503')
+            expect(body.msg).toBe('Bad Request')
+        })
+    });
+    test('should return a 400 if an empty body is sent, and an error code for a NOT NULL violation', () => {
+        return request(app)
+        .post('/api/articles')
+        .expect(400)
+        .send({})
+        .then(({ body }) => {
+            expect(body.code).toBe('23502')
+            expect(body.msg).toBe('Bad Request')
+        })
+    });
+    test('should return a 400 status code if a topic violates foreign key/doesn`t exist', () => {
+        return request(app)
+        .post('/api/articles')
+        .expect(400)
+        .send({
+            author: 'rogersop',
+            title: 'Lost in My Own Backgarden',
+            body: 'Please Send Help.',
+            topic: 'It`s Rather Urgent.'
+        })
+        .then(({ body }) => {
+            expect(body.code).toBe('23503')
+            expect(body.msg).toBe('Bad Request')
+        })
+    });
+    test('should return a 400 status code and 23502 PSQL error code if a NOT NULL constraint is violated', () => {
+        return request(app)
+        .post('/api/articles')
+        .expect(400)
+        .send({
+            author: 'lurker',
+            title: 'After the Gold Rush'
+        })
+        .then(({ body }) => {
+            expect(body.code).toBe('23502')
+            expect(body.msg).toBe('Bad Request')
+        })
+    });
+});
 describe('GET /api/articles?topics=QUERIES', () => {
     test('should return a 200 status OK and all articles on specified topic', () => {
         return request(app)
