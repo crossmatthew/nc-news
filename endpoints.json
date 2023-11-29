@@ -98,6 +98,9 @@
       ]
     }
   },
+  "DELETE /api/articles/:article_id": {
+    "description": "deletes an article when passed the respective article_id"
+  },
   "DELETE /api/articles/comments/:comment_id": {
     "description": "deletes a comment when passed its comment_id"
   },
