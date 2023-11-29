@@ -269,13 +269,13 @@ describe('GET /api/articles/:article_id', () => {
         })
     });
 });
-describe('DELETE /api/comments/:comment_id', () => {
+describe('DELETE /api/articles/:article_id', () => {
     test('should return a status code of 204 after an article has been deleted by article_id', () => {
         return request(app)
         .delete('/api/articles/1')
         .expect(204)
         })
-    test('should return 404 status code if trying to delete a non-existent comment', () => {
+    test('should return 404 status code if trying to delete a non-existent article', () => {
         return request(app)
         .delete('/api/articles/333000333')
         .expect(404)
@@ -283,14 +283,14 @@ describe('DELETE /api/comments/:comment_id', () => {
             expect(body.msg).toBe('Not Found!')
         })  
     });
-    test('should return 400 status code if trying to delete a comment without passing comment_id as a number', () => {
+    test('should return 400 status code if trying to delete an article without passing article_id as a number', () => {
         return request(app)
         .delete('/api/articles/anArticle')
         .expect(400)
         .then(({ body }) => {
             expect(body.msg).toBe('Bad Request')
         })
-});
+    });
 });
 describe('GET /api/articles/:article_id/comments', () => {
     test('should return 200 OK status and an array of all comments for a specific article, sorted in descending order by created_at', () => {
