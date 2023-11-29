@@ -1,4 +1,4 @@
-const { specificArticle, allArticles, patchThisArticle, articlesQuery, articleToPost } = require("../models/articles-model")
+const { specificArticle, allArticles, patchThisArticle, articlesQuery, articleToPost, deleteThisArticle } = require("../models/articles-model")
 
 exports.getArticle = (req, res, next) => {
     specificArticle(req)
@@ -38,6 +38,15 @@ exports.postArticle = (req, res, next) => {
     articleToPost(req)
     .then((data) => {
         res.status(201).send(data)
+    })
+    .catch((err) => {
+        next(err)
+    })
+};
+exports.deleteArticle = (req, res, next) => {
+    deleteThisArticle(req)
+    .then((data) => {
+        res.status(204).send(data)
     })
     .catch((err) => {
         next(err)

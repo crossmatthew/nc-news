@@ -73,13 +73,6 @@ exports.articlesQuery = (req) => {
 };
 exports.articleToPost = (req) => {
     const { body } = req
-    // if (!body.username || !body.topic) return Promise.reject({status: 400})
-    // const promises = [
-    //     checkValueExists('topics', 'slug', body.topic),
-    //     checkValueExists('users', 'username', body.username)
-    // ]
-    // return Promise.all(promises)
-    // .then(() => {
         return db.query(`
         INSERT INTO articles (author, title, body, topic, article_img_url)
         VALUES ($1, $2, $3, $4, $5)
@@ -96,5 +89,13 @@ exports.articleToPost = (req) => {
         .then((data) => {
             return { article: data.rows[0] }
         })
+    })
+};
+exports.deleteThisArticle = (req) => {
+    const { params } = req
+    return checkValueExists('articles', 'article_id', params.article_id)
+    .then(() => {
+        return db.query(`
+        DELETE FROM articles WHERE article_id = $1;`, [params.article_id])
     })
 };
