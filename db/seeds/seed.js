@@ -31,7 +31,6 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         name VARCHAR NOT NULL,
         avatar_url VARCHAR
       );`);
-
       return Promise.all([topicsTablePromise, usersTablePromise]);
     })
     .then(() => {
@@ -52,7 +51,7 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       CREATE TABLE comments (
         comment_id SERIAL PRIMARY KEY,
         body VARCHAR NOT NULL,
-        article_id INT REFERENCES articles(article_id) NOT NULL,
+        article_id INT NOT NULL REFERENCES articles(article_id) ON DELETE CASCADE,
         author VARCHAR REFERENCES users(username) NOT NULL,
         votes INT DEFAULT 0 NOT NULL,
         created_at TIMESTAMP DEFAULT NOW()
