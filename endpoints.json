@@ -8,6 +8,16 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
+  "POST /api/topics": {
+    "description": "takes a slug and a description, and allows new topics to be added",
+    "exampleResponse": {
+      "topic":
+        {
+          "slug": "Gardening",
+          "description": "The hobby of horticulture"
+        }
+    }
+  },
   "GET /api/users": {
     "description": "serves an array of objects, showing all users",
     "exampleResponse": {
