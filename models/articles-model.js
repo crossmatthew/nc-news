@@ -56,20 +56,32 @@ exports.patchThisArticle = (req) => {
 };
 exports.articlesQuery = (req) => {
     const { query } = req
-    return checkValueExists('topics', 'slug', query.topic)
-        .then(() => {
-            return db.query(`
-                SELECT * FROM articles
-                WHERE topic = $1;`, [query.topic])
-        })
-        .then((data) => {
-            if (data.rows.length === 0) {
-                if (query.topic) {
-                    return {status: 200, articles: []}
-                }
+    let { sort_by='created_at', order='DESC'} = query
+    if (sort_by === '') sort_by ='created_at';
+    if (order === '') order='DESC';
+    return checkColumnExists('articles', `${sort_by}`)
+    .then(() => {
+        if (order.toUpperCase() !== 'ASC' && order.toUpperCase() !== 'DESC') {
+            return Promise.reject({status: 400})
+        }
+    })
+    .then(() => {
+        return checkValueExists('topics', 'slug', query.topic)
+    })
+    .then(() => {
+        return db.query(`
+            SELECT * FROM articles
+            WHERE topic = $1
+            ORDER BY ${sort_by} ${order};`, [query.topic])
+    })
+    .then((data) => {
+        if (data.rows.length === 0) {
+            if (query.topic) {
+                return {status: 200, articles: []}
             }
-            return { articles: data.rows }
-        })
+        }
+        return { articles: data.rows }
+    });
 };
 exports.articleToPost = (req) => {
     const { body } = req

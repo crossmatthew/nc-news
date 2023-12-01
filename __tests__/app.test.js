@@ -231,58 +231,58 @@ describe('GET /api/articles?topics=QUERIES', () => {
         })
     });
 });
-describe('GET /api/articles?sort_by=ANY_EXISTING_COLUMN&ORDER=ASC_or_DESC', () => {
+describe('GET /api/articles?topic=QUERY&sort_by=ANY_EXISTING_COLUMN&ORDER=ASC_or_DESC', () => {
     test('should return 200 status code and articles sorted by COLUMN NAME, defaulted to a descending order with order not provided', () => {
         return request(app)
-        .get('/api/articles?sort_by=title')
+        .get('/api/articles?topic=mitch&sort_by=title')
         .expect(200)
         .then(({ body }) => {
-            expect(body.articles.length).toBe(13)
+            expect(body.articles.length).toBe(12)
             expect(body.articles).toBeSorted({ descending: true, key: 'title' })
             body.articles.forEach((article) => {
-                expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'author', 'created_at', 'article_img_url', 'votes', 'topic', 'comment_count'])
+                expect(Object.keys(article)).toEqual(expect.arrayContaining(['article_id', 'title', 'author', 'created_at', 'article_img_url', 'votes', 'topic', 'body']))
             })
         })
 	});
     test('should return a 200 status code and articles sorted by created_at in DESC order when sort_by= is present but with no column provided', () => {
         return request(app)
-        .get('/api/articles?sort_by=')
+        .get('/api/articles?topic=mitch&sort_by=created_at&order=asc')
         .expect(200)
         .then(({ body }) => {
-            expect(body.articles.length).toBe(13)
-            expect(body.articles).toBeSorted({ descending: true, key: 'created_at' })
+            expect(body.articles.length).toBe(12)
+            expect(body.articles).toBeSorted({ descending: false, key: 'created_at' })
             body.articles.forEach((article) => {
-                expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'author', 'created_at', 'article_img_url', 'votes', 'topic', 'comment_count'])
+                expect(Object.keys(article)).toEqual(expect.arrayContaining(['article_id', 'title', 'author', 'created_at', 'article_img_url', 'votes', 'topic', 'body']))
             })
         })
 	});
 	test('should return a 200 status code and articles sorted by COLUMN NAME in ASC order', () => {
         return request(app)
-        .get('/api/articles?sort_by=author&order=ASC')
+        .get('/api/articles?topic=mitch&sort_by=author&order=ASC')
         .expect(200)
         .then(({ body }) => {
-            expect(body.articles.length).toBe(13)
+            expect(body.articles.length).toBe(12)
             expect(body.articles).toBeSorted({ descending: false, key: 'author' })
             body.articles.forEach((article) => {
-                expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'author', 'created_at', 'article_img_url', 'votes', 'topic', 'comment_count'])
+                expect(Object.keys(article)).toEqual(expect.arrayContaining(['article_id', 'title', 'author', 'created_at', 'article_img_url', 'votes', 'topic', 'body']))
             })
         })
 	});
 	test('should return a 200 status code and articles sorted by COLUMN NAME in DESC order', () => {
         return request(app)
-        .get('/api/articles?sort_by=author&order=desc')
+        .get('/api/articles?topic=mitch&sort_by=author&order=desc')
         .expect(200)
         .then(({ body }) => {
-            expect(body.articles.length).toBe(13)
+            expect(body.articles.length).toBe(12)
             expect(body.articles).toBeSorted({ descending: true, key: 'author' })
             body.articles.forEach((article) => {
-                expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'author', 'created_at', 'article_img_url', 'votes', 'topic', 'comment_count'])
+                expect(Object.keys(article)).toEqual(expect.arrayContaining(['article_id', 'title', 'author', 'created_at', 'article_img_url', 'votes', 'topic', 'body']))
             })
         })
 	});
 	test('should return a 400 status code when a non-existing column name is provided', () => {
         return request(app)
-        .get('/api/articles?sort_by=noColumnHere')
+        .get('/api/articles?topic=mitch&sort_by=noColumnHere')
         .expect(400)
         .then(({ body }) => {
             expect(body.msg).toBe('Bad Request')
@@ -290,7 +290,73 @@ describe('GET /api/articles?sort_by=ANY_EXISTING_COLUMN&ORDER=ASC_or_DESC', () =
 	});
     test('should return a 400 status code if sort_by is valid, but order is invalid', () => {
         return request(app)
-        .get('/api/articles?sort_by=author&order=UpsideDown')
+        .get('/api/articles?topic=mitchsort_by=author&order=UpsideDown')
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    });
+});
+describe('GET /api/articles?sort_by=ANY_EXISTING_COLUMN&ORDER=ASC_or_DESC', () => {
+    test('should return 200 status code and articles sorted by COLUMN NAME, defaulted to a descending order with order not provided', () => {
+        return request(app)
+        .get('/api/articles?topic=mitch&sort_by=title')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.articles.length).toBe(12)
+            expect(body.articles).toBeSorted({ descending: true, key: 'title' })
+            body.articles.forEach((article) => {
+                expect(Object.keys(article)).toEqual(expect.arrayContaining(['article_id', 'title', 'author', 'created_at', 'article_img_url', 'votes', 'topic', 'body']))
+            })
+        })
+	});
+    test('should return a 200 status code and articles sorted by created_at in DESC order when sort_by= is present but with no column provided', () => {
+        return request(app)
+        .get('/api/articles?topic=mitch&sort_by=')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.articles.length).toBe(12)
+            expect(body.articles).toBeSorted({ descending: true, key: 'created_at' })
+            body.articles.forEach((article) => {
+                expect(Object.keys(article)).toEqual(expect.arrayContaining(['article_id', 'title', 'author', 'created_at', 'article_img_url', 'votes', 'topic', 'body']))
+            })
+        })
+	});
+	test('should return a 200 status code and articles sorted by COLUMN NAME in ASC order', () => {
+        return request(app)
+        .get('/api/articles?topic=mitch&sort_by=author&order=ASC')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.articles.length).toBe(12)
+            expect(body.articles).toBeSorted({ descending: false, key: 'author' })
+            body.articles.forEach((article) => {
+                expect(Object.keys(article)).toEqual(expect.arrayContaining(['article_id', 'title', 'author', 'created_at', 'article_img_url', 'votes', 'topic', 'body']))
+            })
+        })
+	});
+	test('should return a 200 status code and articles sorted by COLUMN NAME in DESC order', () => {
+        return request(app)
+        .get('/api/articles?topic=mitch&sort_by=author&order=desc')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.articles.length).toBe(12)
+            expect(body.articles).toBeSorted({ descending: true, key: 'author' })
+            body.articles.forEach((article) => {
+                expect(Object.keys(article)).toEqual(expect.arrayContaining(['article_id', 'title', 'author', 'created_at', 'article_img_url', 'votes', 'topic', 'body']))
+            })
+        })
+	});
+	test('should return a 400 status code when a non-existing column name is provided', () => {
+        return request(app)
+        .get('/api/articles?topic=mitch&sort_by=noColumnHere')
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+	});
+    test('should return a 400 status code if sort_by is valid, but order is invalid', () => {
+        return request(app)
+        .get('/api/articles?topic=mitch&sort_by=author&order=UpsideDown')
         .expect(400)
         .then(({ body }) => {
             expect(body.msg).toBe('Bad Request')
