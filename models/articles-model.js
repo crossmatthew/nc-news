@@ -33,13 +33,14 @@ exports.allArticles = (req) => {
         FROM articles LEFT JOIN comments
         ON articles.article_id = comments.article_id
         GROUP BY articles.article_id
-        ORDER BY articles.${sort_by} ${order};`
+        ORDER BY ${sort_by === 'comment_count' ? 'comment_count' : `articles.${sort_by}`} ${order};`
         return db.query(queryStr)
     })
     .then((data) => {
         return { articles: data.rows }
     })
 };
+
 exports.patchThisArticle = (req) => {
     const { body, params } = req
     return checkValueExists('articles', 'article_id', params.article_id)
