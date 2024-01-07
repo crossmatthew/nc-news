@@ -32,18 +32,14 @@ exports.allArticles = (req) => {
     FROM articles LEFT JOIN comments
     ON articles.article_id = comments.article_id`
     if (topic) {
-        if (author) {
-            queryStr += ` WHERE articles.topic = '${topic}' AND articles.author = '${author}`
+        if (topic && author) {
+            queryStr += ` WHERE articles.topic = '${topic}' AND articles.author = '${author}'`
         } else {
             queryStr += ` WHERE articles.topic = '${topic}'`
         }
     }
-    if (author) {
-        if (topic) {
-            queryStr += ` WHERE articles.topic = '${author}' AND articles.author = '${topic}`
-        } else {
+    if (author && !topic) {
             queryStr += ` WHERE articles.author = '${author}'`
-        }
     }
     queryStr += ` GROUP BY articles.article_id`
     if (sort_by) {
@@ -56,15 +52,28 @@ exports.allArticles = (req) => {
         queryStr += ` ORDER BY articles.created_at desc`
     }
     if (author) {
-        return checkValueExists('articles', 'author', author)
-        .then(() => {
-            return db.query(queryStr)
-        })
-        .then((data) => {
-            return { articles: data.rows }
-        })
+        if (author && topic) {
+            return checkValueExists('articles', 'author', author)
+            .then(() => {
+                return checkValueExists('articles', 'topic', topic)
+            })
+            .then(() => {
+                return db.query(queryStr)
+            })
+            .then((data) => {
+                return { articles: data.rows }
+            })
+        } else {
+            return checkValueExists('articles', 'author', author)
+            .then(() => {
+                return db.query(queryStr)
+            })
+            .then((data) => {
+                return { articles: data.rows }
+            })
+        }
     }
-    if (topic) {
+    if (topic && !author) {
         return checkValueExists('articles', 'topic', topic)
         .then(() => {
             return db.query(queryStr)
