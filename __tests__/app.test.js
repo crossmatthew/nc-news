@@ -203,7 +203,7 @@ describe('POST /api/articles', () => {
     });
 });
 describe('GET /api/articles?author=QUERIES', () => {
-    test('should return a 200 status OK and all articles on specified topic', () => {
+    test('should return a 200 status OK and all articles by a specific author', () => {
         return request(app)
         .get('/api/articles?author=butter_bridge')
         .expect(200)
@@ -214,7 +214,7 @@ describe('GET /api/articles?author=QUERIES', () => {
             })
         })
     });
-    test('should return a 404 when passed a topic which doesn`t exist', () => {
+    test('should return a 404 when passed an author whom doesn`t exist', () => {
         return request(app)
         .get('/api/articles?author=notAnAuthor')
         .expect(404)
@@ -238,6 +238,35 @@ describe('GET /api/articles?topics=QUERIES', () => {
     test('should return a 404 when passed a topic which doesn`t exist', () => {
         return request(app)
         .get('/api/articles?topic=notATopic1234')
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe('Not Found!')
+        })
+    });
+});
+describe('GET /api/articles?author=QUERIES&topic=QUERIES', () => {
+    test('should return a 200 status OK and all articles by an author on an existing topic', () => {
+        return request(app)
+        .get('/api/articles?author=butter_bridge&topic=mitch')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.articles.length).toBe(4)
+            body.articles.forEach((article) => {
+                expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count' ])
+            })
+        })
+    });
+    test('should return a 404 status when an author exists but a topic doesn`t', () => {
+        return request(app)
+        .get('/api/articles?author=butter_bridge&topic=difjgrwij')
+        .expect(404)
+        .then(({ body }) => {
+                expect(body.msg).toBe('Not Found!')
+        })
+    });
+    test('should return a 404 when passed a non-existing author and topic', () => {
+        return request(app)
+        .get('/api/articles?author=notAnAuthor&topic=beans')
         .expect(404)
         .then(({ body }) => {
             expect(body.msg).toBe('Not Found!')
