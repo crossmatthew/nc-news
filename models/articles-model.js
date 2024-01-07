@@ -20,25 +20,56 @@ exports.specificArticle = (req) => {
     })
 };
 exports.allArticles = (req) => {
-    let { sort_by='created_at', order='DESC'} = req.query
-    if (sort_by === '') sort_by = 'created_at';
-    return checkColumnExists('articles', `${sort_by}`)
-    .then(() => {
-        if (order.toUpperCase() !== 'ASC' && order.toUpperCase() !== 'DESC') {
+    const { sort_by, order, topic, author } = req.query
+    if (order) {
+        if (order.toLowerCase() !== 'asc' && order.toLowerCase() !== 'desc') {
             return Promise.reject({status: 400})
         }
-    })
-    .then(() => {
-        const queryStr = `SELECT articles.article_id, articles.title, articles.author, articles.created_at, articles.article_img_url, articles.votes, articles.topic, COUNT(comments.comment_id) AS comment_count
-FROM articles LEFT JOIN comments
-ON articles.article_id = comments.article_id
-GROUP BY articles.article_id
-ORDER BY ${sort_by === 'comment_count' ? 'comment_count' : `articles.${sort_by}`}, ${sort_by === 'comment_count' ? '' : order};`
-        return db.query(queryStr)
-    })
+    }
+    let queryStr = 
+    `SELECT articles.*, 
+    COUNT(comments.comment_id) AS comment_count
+    FROM articles LEFT JOIN comments
+    ON articles.article_id = comments.article_id`
+    if (topic) {
+        queryStr += ` WHERE articles.topic = '${topic}'`
+    }
+    if (author) {
+        queryStr += ` WHERE articles.author = '${author}'`
+    }
+    queryStr += ` GROUP BY articles.article_id`
+    if (sort_by) {
+        if (order) {
+            queryStr += ` ORDER BY articles.${sort_by} ${order};`
+        } else {
+            queryStr += ` ORDER BY articles.${sort_by} desc`
+        }
+    } else {
+        queryStr += ` ORDER BY articles.created_at desc`
+    }
+    if (author) {
+        return checkValueExists('articles', 'author', author)
+        .then(() => {
+            return db.query(queryStr)
+        })
+        .then((data) => {
+            return { articles: data.rows }
+        })
+    }
+    if (topic) {
+        return checkValueExists('articles', 'topic', topic)
+        .then(() => {
+            return db.query(queryStr)
+        })
+        .then((data) => {
+            return { articles: data.rows }
+        })
+    } else {
+    return db.query(queryStr)
     .then((data) => {
         return { articles: data.rows }
     })
+    }
 };
 
 exports.patchThisArticle = (req) => {
@@ -54,23 +85,6 @@ exports.patchThisArticle = (req) => {
     .then((data) => {
         return {article: data.rows[0]}
     })
-};
-exports.articlesQuery = (req) => {
-    const { query } = req
-    return checkValueExists('topics', 'slug', query.topic)
-        .then(() => {
-            return db.query(`
-                SELECT * FROM articles
-                WHERE topic = $1;`, [query.topic])
-        })
-        .then((data) => {
-            if (data.rows.length === 0) {
-                if (query.topic) {
-                    return {status: 200, articles: []}
-                }
-            }
-            return { articles: data.rows }
-        })
 };
 exports.articleToPost = (req) => {
     const { body } = req
