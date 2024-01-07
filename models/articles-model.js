@@ -30,10 +30,10 @@ exports.allArticles = (req) => {
     })
     .then(() => {
         const queryStr = `SELECT articles.article_id, articles.title, articles.author, articles.created_at, articles.article_img_url, articles.votes, articles.topic, COUNT(comments.comment_id) AS comment_count
-        FROM articles LEFT JOIN comments
-        ON articles.article_id = comments.article_id
-        GROUP BY articles.article_id
-        ORDER BY ${sort_by === 'comment_count' ? 'comment_count' : `articles.${sort_by}`} ${order};`
+FROM articles LEFT JOIN comments
+ON articles.article_id = comments.article_id
+GROUP BY articles.article_id
+ORDER BY ${sort_by === 'comment_count' ? 'comment_count' : `articles.${sort_by}`}, ${sort_by === 'comment_count' ? '' : order};`
         return db.query(queryStr)
     })
     .then((data) => {
