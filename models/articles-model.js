@@ -32,10 +32,18 @@ exports.allArticles = (req) => {
     FROM articles LEFT JOIN comments
     ON articles.article_id = comments.article_id`
     if (topic) {
-        queryStr += ` WHERE articles.topic = '${topic}'`
+        if (author) {
+            queryStr += ` WHERE articles.topic = '${topic}' AND articles.author = '${author}`
+        } else {
+            queryStr += ` WHERE articles.topic = '${topic}'`
+        }
     }
     if (author) {
-        queryStr += ` WHERE articles.author = '${author}'`
+        if (topic) {
+            queryStr += ` WHERE articles.topic = '${author}' AND articles.author = '${topic}`
+        } else {
+            queryStr += ` WHERE articles.author = '${author}'`
+        }
     }
     queryStr += ` GROUP BY articles.article_id`
     if (sort_by) {
