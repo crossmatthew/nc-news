@@ -60,7 +60,6 @@ exports.allArticles = (req) => {
             queryStr += ` LIMIT ${limit}`
         }
     }
-    console.log(queryStr)
     if (author) {
         if (author && topic) {
             return checkValueExists('articles', 'author', author)

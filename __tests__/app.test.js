@@ -127,7 +127,7 @@ describe('GET /api/articles', () => {
         .get('/api/articles')
         .expect(200)
         .then(({ body }) => {
-            expect(body.articles.length).toBe(13)
+            expect(body.articles.length).toBe(10)
             expect(body.articles).toBeSorted({ descending: true, key: 'created_at'})
         })
     });
@@ -203,23 +203,60 @@ describe('POST /api/articles', () => {
     });
 });
 describe('GET /api/articles?limit=QUERIES&p=QUERIES', () => {
-    test('should return a 200 status OK and 5 articles', () => {
+    test('should return a 200 status OK and 5 articles, with article_id 1 to 5', () => {
         return request(app)
-        .get('/api/articles?limit=5')
+        .get('/api/articles?sort_by=article_id&limit=5&order=asc')
         .expect(200)
         .then(({ body }) => {
+            expect(body.articles).toBeSorted({ descending: false, key: 'article_id'})
             expect(body.articles.length).toBe(5)
             body.articles.forEach((article) => {
-                expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count' ])
+                expect(article.article_id >= 1 && article.article_id <= 5).toBe(true)
             })
         })
     });
-    test('should return a 404 when passed an author whom doesn`t exist', () => {
+    test('should return a 200 status OK and 5 articles, with article_id 6 to 10', () => {
         return request(app)
-        .get('/api/articles?author=notAnAuthor')
-        .expect(404)
+        .get('/api/articles?sort_by=article_id&limit=5&p=1&order=asc')
+        .expect(200)
         .then(({ body }) => {
-            expect(body.msg).toBe('Not Found!')
+            expect(body.articles).toBeSorted({ descending: false, key: 'article_id'})
+            expect(body.articles.length).toBe(5)
+            body.articles.forEach((article) => {
+                expect(article.article_id <= 10 && article.article_id >= 6).toBe(true)
+            })
+        })
+    });
+    test('should return a 400 status when p is non-numerical', () => {
+        return request(app)
+        .get('/api/articles?sort_by=article_id&limit=5&p=No')
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    });
+    test('should return a 400 when passed a non numerical lmit and valid p', () => {
+        return request(app)
+        .get('/api/articles?limit=ten&p=2')
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    });
+    test('should return a 400 when passed a non numerical lmit', () => {
+        return request(app)
+        .get('/api/articles?limit=notALimit')
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    });
+    test('should return a 400 when passed a non numerical lmit and p', () => {
+        return request(app)
+        .get('/api/articles?limit=notALimit&p=no')
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe('Bad Request')
         })
     });
 });
@@ -250,7 +287,7 @@ describe('GET /api/articles?topics=QUERIES', () => {
         .get('/api/articles?topic=mitch')
         .expect(200)
         .then(({ body }) => {
-            expect(body.articles.length).toBe(12)
+            expect(body.articles.length).toBe(10)
             body.articles.forEach((article) => {
                 expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count' ])
             })
@@ -300,7 +337,7 @@ describe('GET /api/articles?sort_by=ANY_EXISTING_COLUMN&ORDER=ASC_or_DESC', () =
         .get('/api/articles?sort_by=title')
         .expect(200)
         .then(({ body }) => {
-            expect(body.articles.length).toBe(13)
+            expect(body.articles.length).toBe(10)
             expect(body.articles).toBeSorted({ descending: true, key: 'title' })
             body.articles.forEach((article) => {
                 expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count'])
@@ -312,7 +349,7 @@ describe('GET /api/articles?sort_by=ANY_EXISTING_COLUMN&ORDER=ASC_or_DESC', () =
         .get('/api/articles?sort_by=')
         .expect(200)
         .then(({ body }) => {
-            expect(body.articles.length).toBe(13)
+            expect(body.articles.length).toBe(10)
             expect(body.articles).toBeSorted({ descending: true, key: 'created_at' })
             body.articles.forEach((article) => {
                 expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count'])
@@ -324,7 +361,7 @@ describe('GET /api/articles?sort_by=ANY_EXISTING_COLUMN&ORDER=ASC_or_DESC', () =
         .get('/api/articles?sort_by=author&order=ASC')
         .expect(200)
         .then(({ body }) => {
-            expect(body.articles.length).toBe(13)
+            expect(body.articles.length).toBe(10)
             expect(body.articles).toBeSorted({ descending: false, key: 'author' })
             body.articles.forEach((article) => {
                 expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count'])
@@ -336,7 +373,7 @@ describe('GET /api/articles?sort_by=ANY_EXISTING_COLUMN&ORDER=ASC_or_DESC', () =
         .get('/api/articles?sort_by=author&order=desc')
         .expect(200)
         .then(({ body }) => {
-            expect(body.articles.length).toBe(13)
+            expect(body.articles.length).toBe(10)
             expect(body.articles).toBeSorted({ descending: true, key: 'author' })
             body.articles.forEach((article) => {
                 expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count'])
