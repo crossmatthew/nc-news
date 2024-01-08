@@ -20,7 +20,7 @@ exports.specificArticle = (req) => {
     })
 };
 exports.allArticles = (req) => {
-    const { sort_by, order, topic, author } = req.query
+    const { sort_by, order, topic, author, limit=10, p } = req.query
     if (order) {
         if (order.toLowerCase() !== 'asc' && order.toLowerCase() !== 'desc') {
             return Promise.reject({status: 400})
@@ -44,13 +44,23 @@ exports.allArticles = (req) => {
     queryStr += ` GROUP BY articles.article_id`
     if (sort_by) {
         if (order) {
-            queryStr += ` ORDER BY articles.${sort_by} ${order};`
+            queryStr += ` ORDER BY articles.${sort_by} ${order}`
         } else {
             queryStr += ` ORDER BY articles.${sort_by} desc`
         }
     } else {
         queryStr += ` ORDER BY articles.created_at desc`
     }
+    if (limit) {
+        if (limit && p) {
+            let offset = (p * limit)
+            queryStr += ` LIMIT ${limit} OFFSET ${offset}`
+        }
+        if (limit && !p) {
+            queryStr += ` LIMIT ${limit}`
+        }
+    }
+    console.log(queryStr)
     if (author) {
         if (author && topic) {
             return checkValueExists('articles', 'author', author)

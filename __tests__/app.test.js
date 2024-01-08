@@ -202,6 +202,27 @@ describe('POST /api/articles', () => {
         })
     });
 });
+describe('GET /api/articles?limit=QUERIES&p=QUERIES', () => {
+    test('should return a 200 status OK and 5 articles', () => {
+        return request(app)
+        .get('/api/articles?limit=5')
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.articles.length).toBe(5)
+            body.articles.forEach((article) => {
+                expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count' ])
+            })
+        })
+    });
+    test('should return a 404 when passed an author whom doesn`t exist', () => {
+        return request(app)
+        .get('/api/articles?author=notAnAuthor')
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe('Not Found!')
+        })
+    });
+});
 describe('GET /api/articles?author=QUERIES', () => {
     test('should return a 200 status OK and all articles by a specific author', () => {
         return request(app)
