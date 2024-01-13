@@ -58,12 +58,12 @@ exports.allArticles = (req) => {
     queryStr += ` GROUP BY articles.article_id`
     if (sort_by) {
         if (order) {
-            queryStr += ` ORDER BY articles.${sort_by} ${order}`
+            queryStr += ` ORDER BY ${sort_by} ${order}`
         } else {
-            queryStr += ` ORDER BY articles.${sort_by} desc`
+            queryStr += ` ORDER BY ${sort_by} desc`
         }
     } else {
-        queryStr += ` ORDER BY articles.created_at desc`
+        queryStr += ` ORDER BY created_at desc`
     }
     if (limit) {
         if (limit && p) {
