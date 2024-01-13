@@ -3,20 +3,31 @@ const checkValueExists = require('../utils/checkValueExists');
 
 exports.commentsOfArticle = (req) => {
     const { params } = req
+    const { limit=10, p } = req.query
     return checkValueExists('articles', 'article_id', params.article_id)
     .then(() => {
-        return db.query(`
-        SELECT * FROM comments
-        WHERE article_id = $1
-        ORDER BY created_at DESC;`, [params.article_id])
+        let queryStr = `SELECT * FROM comments
+        WHERE article_id = ${params.article_id}
+        ORDER BY created_at DESC`
+        if (limit) {
+            if (limit && p) {
+                let offset = (p * limit)
+                queryStr += ` LIMIT ${limit} OFFSET ${offset};`
+            }
+            if (limit && !p) {
+                queryStr += ` LIMIT ${limit};`
+            }
+        }
+        return db.query(queryStr)
     })
     .then((data) => {
         if (!data.rows.length) {
             return checkValueExists('articles', 'article_id', params.article_id)
+        } else {
+            return data.rows
         }
-    else {
-        return data.rows
-}})};
+    })
+};
 exports.commentToPost = (req) => {
     const { body, params } = req
     if (!body.username) return Promise.reject({status: 400})
