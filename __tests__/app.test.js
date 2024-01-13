@@ -530,7 +530,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         .expect(200)
         .then(({ body }) => {
             expect(body.comments).toBeSorted({ descending: true, key: 'created_at' })
-            expect(body.comments.length).toBe(11)
+            expect(body.comments.length).toBe(10)
             body.comments.forEach((obj) => {
                 expect(Object.keys(obj)).toMatchObject(['comment_id', 'body', 'article_id', 'author', 'votes', 'created_at'])
             })
