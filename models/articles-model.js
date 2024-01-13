@@ -1,6 +1,5 @@
 const db = require('../db/connection');
 const checkValueExists = require('../utils/checkValueExists');
-const checkColumnExists = require('../utils/checkColumnExists');
 
 exports.specificArticle = (req) => {
     const { params } = req
@@ -26,20 +25,35 @@ exports.allArticles = (req) => {
             return Promise.reject({status: 400})
         }
     }
+    let where = ``
+    if (topic) {
+        if (topic && author) {
+            where = `WHERE articles.topic = '${topic}' AND articles.author = '${author}'`
+        } else {
+            where = `WHERE articles.topic = '${topic}'`
+        }
+    }
+    if (author && !topic) {
+        where = `WHERE articles.author = '${author}'`
+    }
     let queryStr = 
     `SELECT articles.*, 
-    COUNT(comments.comment_id) AS comment_count
+    COUNT(comments.comment_id) AS comment_count,
+    (SELECT COUNT(*) FROM articles ${where}) AS total_count
     FROM articles LEFT JOIN comments
     ON articles.article_id = comments.article_id`
     if (topic) {
         if (topic && author) {
+            where = `WHERE articles.topic = '${topic}' AND articles.author = '${author}'`
             queryStr += ` WHERE articles.topic = '${topic}' AND articles.author = '${author}'`
         } else {
+            where = `WHERE articles.topic = '${topic}'`
             queryStr += ` WHERE articles.topic = '${topic}'`
         }
     }
     if (author && !topic) {
-            queryStr += ` WHERE articles.author = '${author}'`
+        where = `WHERE articles.author = '${author}'`
+        queryStr += ` WHERE articles.author = '${author}'`
     }
     queryStr += ` GROUP BY articles.article_id`
     if (sort_by) {
