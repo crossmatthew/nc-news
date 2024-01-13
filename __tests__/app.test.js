@@ -268,7 +268,7 @@ describe('GET /api/articles?author=QUERIES', () => {
         .then(({ body }) => {
             expect(body.articles.length).toBe(4)
             body.articles.forEach((article) => {
-                expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count' ])
+                  expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count', 'total_count'])
             })
         })
     });
@@ -289,7 +289,7 @@ describe('GET /api/articles?topics=QUERIES', () => {
         .then(({ body }) => {
             expect(body.articles.length).toBe(10)
             body.articles.forEach((article) => {
-                expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count' ])
+                  expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count', 'total_count'])
             })
         })
     });
@@ -310,7 +310,7 @@ describe('GET /api/articles?author=QUERIES&topic=QUERIES', () => {
         .then(({ body }) => {
             expect(body.articles.length).toBe(4)
             body.articles.forEach((article) => {
-                expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count' ])
+                  expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count', 'total_count'])
             })
         })
     });
@@ -340,7 +340,7 @@ describe('GET /api/articles?sort_by=ANY_EXISTING_COLUMN&ORDER=ASC_or_DESC', () =
             expect(body.articles.length).toBe(10)
             expect(body.articles).toBeSorted({ descending: true, key: 'title' })
             body.articles.forEach((article) => {
-                expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count'])
+                 expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count', 'total_count'])
             })
         })
 	});
@@ -352,7 +352,7 @@ describe('GET /api/articles?sort_by=ANY_EXISTING_COLUMN&ORDER=ASC_or_DESC', () =
             expect(body.articles.length).toBe(10)
             expect(body.articles).toBeSorted({ descending: true, key: 'created_at' })
             body.articles.forEach((article) => {
-                expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count'])
+                 expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count', 'total_count'])
             })
         })
 	});
@@ -364,7 +364,7 @@ describe('GET /api/articles?sort_by=ANY_EXISTING_COLUMN&ORDER=ASC_or_DESC', () =
             expect(body.articles.length).toBe(10)
             expect(body.articles).toBeSorted({ descending: false, key: 'author' })
             body.articles.forEach((article) => {
-                expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count'])
+                 expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count', 'total_count'])
             })
         })
 	});
@@ -376,7 +376,7 @@ describe('GET /api/articles?sort_by=ANY_EXISTING_COLUMN&ORDER=ASC_or_DESC', () =
             expect(body.articles.length).toBe(10)
             expect(body.articles).toBeSorted({ descending: true, key: 'author' })
             body.articles.forEach((article) => {
-                expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count'])
+                 expect(Object.keys(article)).toMatchObject(['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url', 'comment_count', 'total_count'])
             })
         })
 	});
