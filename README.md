@@ -11,7 +11,7 @@ The database is PSQL and interacted with using node-postgres.
 
 Project created using TDD.
 
-The interface for this project is <a href="https://github.com/crossmatthew/fe-nc-news">available at this repo.</a>
+The interface for this project is available <a href="https://github.com/crossmatthew/fe-nc-news">at this repo.</a>
 
 ## Getting Started
 Follow these instructions to get a local copy up-and-running.
