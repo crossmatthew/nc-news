@@ -13,6 +13,8 @@ Project created using TDD.
 
 The interface for this project is available <a href="https://github.com/crossmatthew/fe-nc-news">at this repo.</a>
 
+Please note that this project is hosted for free on Render and is spun-down after 15 minutes of inactivity, therefore page loading may take longer than expected.
+
 ## Getting Started
 Follow these instructions to get a local copy up-and-running.
 
